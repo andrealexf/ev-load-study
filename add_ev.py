@@ -274,24 +274,23 @@ def gerar_arquivo_ev(
         quantidade=quantidade,
     )
 
-    #print(f"\nDEBUG - Quantidade solicitada: {quantidade}")
-    #print(f"DEBUG - Total de RAMAIS sorteados: {len(ramais_sorteados)}")
-
     linhas_ev = []
 
     for ramal in ramais_sorteados:
         linhas_carga = cargas_por_ramal[ramal]
 
-        kw_ev = kw_total_por_unidade / len(linhas_carga)
+        if not linhas_carga:
+            continue
 
-        for linha_original in linhas_carga:
-            linha_ev = montar_linha_ev(
-                linha_original=linha_original,
-                kw_ev=kw_ev,
-                daily_ev=daily_ev,
-            )
+        linha_original = linhas_carga[0]
 
-            linhas_ev.append(linha_ev)
+        linha_ev = montar_linha_ev(
+            linha_original=linha_original,
+            kw_ev=kw_total_por_unidade,
+            daily_ev=daily_ev,
+        )
+
+        linhas_ev.append(linha_ev)
 
     if not linhas_ev:
         raise ValueError("Nenhuma linha EV foi gerada.")
@@ -302,19 +301,10 @@ def gerar_arquivo_ev(
         for linha in linhas_ev:
             arquivo.write(linha + "\n")
 
-    ramais_validos_total = len(
-        [
-            ramal for ramal in ramais_arquivo
-            if ramal in cargas_por_ramal
-        ]
-    )
-
-
     print(f"Arquivo de saída: {arquivo_saida}")
-    #print(f"RAMAIS disponíveis no arquivo: {len(ramais_arquivo)}")
-    #print(f"RAMAIS válidos no DSS: {ramais_validos_total}")
     print(f"Unidades EV criadas: {len(ramais_sorteados)}")
-    print(f"Linhas Load.EV criadas: {len(linhas_ev)}")
+    print(f"Carregadores Load.EV criados: {len(linhas_ev)}")
+    print(f"Potência por carregador EV: {kw_total_por_unidade} kW")
 
     print("\nRAMAIS selecionados para receber unidade EV:")
     print(f"Total selecionado: {len(ramais_sorteados)}")

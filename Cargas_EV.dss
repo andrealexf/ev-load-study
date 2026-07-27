@@ -1,4 +1,4 @@
-New "Load.EV_BT_1011367_M1" bus1="1001011367.1.4" phases=1 conn=Wye model=2 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1011367_M2" bus1="1001011367.1.4" phases=1 conn=Wye model=3 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1044428_M1" bus1="1001044428.2.3.4" phases=1 conn=Delta model=2 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1044428_M2" bus1="1001044428.2.3.4" phases=1 conn=Delta model=3 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.EV_BT_1045884_M1" bus1="1001045884.1.2.3.4" phases=3 conn=Delta model=2 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.EV_BT_1045884_M2" bus1="1001045884.1.2.3.4" phases=3 conn=Delta model=3 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.EV_BT_1013719_M1" bus1="1001013719.3.4" phases=1 conn=Wye model=2 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.EV_BT_1013719_M2" bus1="1001013719.3.4" phases=1 conn=Wye model=3 kv=0.220000000 kw=1.75 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"

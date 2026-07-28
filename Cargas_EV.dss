@@ -1,2 +1,1 @@
-New "Load.EV_BT_5180203_M1" bus1="1005180203.1.2.4" phases=1 conn=Delta model=2 kv=0.220000000 kw=3.5 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1033781_M1" bus1="1001033781.1.2.4" phases=1 conn=Delta model=2 kv=0.220000000 kw=3.5 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.EV_BT_1011423_M1" bus1="1001011423.2.3.4" phases=1 conn=Delta model=2 kv=0.220000000 kw=3.5 pf=0.92 status=variable vmaxpu=1.5 vminpu=0.92 

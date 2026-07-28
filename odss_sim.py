@@ -16,9 +16,17 @@ except ImportError:
             'python -m pip install "OpenDSSDirect.py[extras]"'
         ) from exc
 
-from add_ev import executar_add_ev
+from add_ev import (
+    executar_add_ev,
+    ARQUIVO_SAIDA_EV as ARQUIVO_CARGAS_EV_ORIGEM,
+)
+
 from search_segbt import executar_search_segbt
-from add_bus_marker import (executar_add_bus_marker,ARQUIVO_SAIDA as ARQUIVO_BUS_MARKERS_ORIGEM,)
+
+from add_bus_marker import (
+    executar_add_bus_marker,
+    ARQUIVO_SAIDA as ARQUIVO_BUS_MARKERS_ORIGEM,
+)
 
 
 def criar_diretorio_resultados(
@@ -91,14 +99,85 @@ def limpar_circuito() -> None:
     )
 
 
-def compilar_circuito_base(
+def preparar_cenario(
+    numero_simulacao: int,
+    quantidade_cargas_ev: int,
+    diretorio_resultados: Path,
+) -> dict:
+    executar_add_ev(
+        quantidade=quantidade_cargas_ev,
+    )
+
+    executar_search_segbt()
+
+    executar_add_bus_marker()
+
+    arquivo_cargas_ev_origem = Path(ARQUIVO_CARGAS_EV_ORIGEM).resolve()
+
+    if not arquivo_cargas_ev_origem.exists():
+        raise FileNotFoundError(
+            f"Arquivo Cargas_EV não encontrado:\n"
+            f"{arquivo_cargas_ev_origem}"
+        )
+
+    arquivo_bus_marker_origem = Path(ARQUIVO_BUS_MARKERS_ORIGEM).resolve()
+
+    if not arquivo_bus_marker_origem.exists():
+        raise FileNotFoundError(
+            f"Arquivo de BusMarkers não encontrado:\n"
+            f"{arquivo_bus_marker_origem}"
+        )
+
+    arquivo_cargas_ev_simulacao = (
+        diretorio_resultados
+        / f"Cargas_EV_Sim_{numero_simulacao:05d}.dss"
+    )
+
+    arquivo_bus_marker_simulacao = (
+        diretorio_resultados
+        / f"BusMarkers_EV_Sim_{numero_simulacao:05d}.dss"
+    )
+
+    shutil.copyfile(
+        arquivo_cargas_ev_origem,
+        arquivo_cargas_ev_simulacao,
+    )
+
+    shutil.copyfile(
+        arquivo_bus_marker_origem,
+        arquivo_bus_marker_simulacao,
+    )
+
+    return {
+        "arquivo_cargas_ev": arquivo_cargas_ev_simulacao,
+        "arquivo_bus_marker": arquivo_bus_marker_simulacao,
+    }
+
+
+def compilar_circuito_simulacao(
     arquivo_dss: Path,
+    arquivo_cargas_ev: Path,
+    arquivo_bus_marker: Path,
 ) -> None:
     arquivo_dss = Path(arquivo_dss).resolve()
+    arquivo_cargas_ev = Path(arquivo_cargas_ev).resolve()
+    arquivo_bus_marker = Path(arquivo_bus_marker).resolve()
 
     if not arquivo_dss.exists():
         raise FileNotFoundError(
             f"Arquivo Master do OpenDSS não encontrado:\n{arquivo_dss}"
+        )
+
+    if not arquivo_cargas_ev.exists():
+        raise FileNotFoundError(
+            f"Arquivo Cargas_EV da simulação não encontrado:\n"
+            f"{arquivo_cargas_ev}"
+        )
+
+    if not arquivo_bus_marker.exists():
+        raise FileNotFoundError(
+            f"Arquivo BusMarker da simulação não encontrado:\n"
+            f"{arquivo_bus_marker}"
         )
 
     limpar_circuito()
@@ -114,59 +193,14 @@ def compilar_circuito_base(
             "O arquivo foi processado, mas nenhum circuito foi carregado."
         )
 
-
-def preparar_cenario(
-    numero_simulacao: int,
-    quantidade_cargas_ev: int,
-    diretorio_resultados: Path,
-) -> Path:
-    executar_add_ev(
-        quantidade=quantidade_cargas_ev,
+    executar_comando_dss(
+        comando=f'Redirect "{arquivo_cargas_ev}"',
     )
 
-    executar_search_segbt()
-
-    executar_add_bus_marker()
-
-    arquivo_origem = Path(ARQUIVO_BUS_MARKERS_ORIGEM).resolve()
-
-    if not arquivo_origem.exists():
-        raise FileNotFoundError(
-            f"Arquivo de BusMarkers não encontrado:\n{arquivo_origem}"
-        )
-
-    arquivo_bus_marker_simulacao = (
-        diretorio_resultados
-        / f"BusMarkers_EV_Sim_{numero_simulacao:05d}.dss"
-    )
-
-    shutil.copyfile(
-        arquivo_origem,
-        arquivo_bus_marker_simulacao,
-    )
-
-    return arquivo_bus_marker_simulacao
-
-
-def limpar_bus_markers() -> None:
     executar_comando_dss(
         comando="ClearBusMarkers",
         ignorar_erro=True,
     )
-
-
-def aplicar_redirect_bus_marker(
-    arquivo_bus_marker: Path,
-) -> None:
-    arquivo_bus_marker = Path(arquivo_bus_marker).resolve()
-
-    if not arquivo_bus_marker.exists():
-        raise FileNotFoundError(
-            f"Arquivo BusMarker da simulação não encontrado:\n"
-            f"{arquivo_bus_marker}"
-        )
-
-    limpar_bus_markers()
 
     executar_comando_dss(
         comando=f'Redirect "{arquivo_bus_marker}"',
@@ -180,7 +214,9 @@ def executar_solve() -> bool:
     return bool(dss.Solution.Converged())
 
 
-def obter_tensoes_validas() -> list[float]:
+def obter_tensoes_validas(
+    limite_minimo_pu: float = 0.4,
+) -> list[float]:
     try:
         tensoes = list(dss.Circuit.AllBusMagPu() or [])
     except Exception:
@@ -194,7 +230,7 @@ def obter_tensoes_validas() -> list[float]:
 
         valor = float(tensao)
 
-        if valor <= 0:
+        if valor < limite_minimo_pu:
             continue
 
         tensoes_validas.append(valor)
@@ -218,11 +254,68 @@ def obter_nome_circuito() -> str:
     except Exception:
         return ""
 
+def obter_hora_simulacao() -> float:
+    try:
+        return float(dss.Solution.DblHour())
+    except Exception:
+        try:
+            return float(dss.Solution.Hour())
+        except Exception:
+            return 0.0
+
+
+def calcular_percentual_perdas(
+    perdas_kw: float,
+    potencia_total_kw: float,
+) -> float:
+    potencia_base = abs(potencia_total_kw)
+
+    if potencia_base <= 0:
+        return 0.0
+
+    return abs(perdas_kw) / potencia_base * 100
+
+
+def imprimir_summary_opendss(
+    resultado: dict,
+    quantidade_simulacoes: int,
+) -> None:
+    simulacao = resultado["simulacao"]
+
+    print("")
+    print(
+        f"SUMMARY OPENDSS - "
+        f"Simulação {simulacao:05d}/{quantidade_simulacoes:05d}"
+    )
+    print("-" * 80)
+    print(f'Hour = {resultado["hora_simulacao"]:.6g}')
+    print(f'Max pu. voltage = {resultado["tensao_maxima_pu"]:.6g}')
+    print(f'Min pu. voltage = {resultado["tensao_minima_pu"]:.6g}')
+    print(
+        "Total Active Power:   "
+        f'{resultado["potencia_total_mw"]:.6f} MW'
+    )
+    print(
+        "Total Reactive Power: "
+        f'{resultado["potencia_total_mvar"]:.6f} Mvar'
+    )
+    print(
+        "Total Active Losses:   "
+        f'{resultado["perdas_mw"]:.6f} MW, '
+        f'({resultado["perdas_percentual"]:.3f} %)'
+    )
+    print(
+        "Total Reactive Losses: "
+        f'{resultado["perdas_mvar"]:.6f} Mvar'
+    )
+    print("-" * 80)
 
 def coletar_resumo_simulacao(
     numero_simulacao: int,
+    arquivo_cargas_ev: Path,
     arquivo_bus_marker: Path,
     tempo_preparacao_segundos: float,
+    tempo_compilacao_segundos: float,
     tempo_solve_segundos: float,
 ) -> dict:
     try:
@@ -234,6 +327,23 @@ def coletar_resumo_simulacao(
         perdas = list(dss.Circuit.Losses() or [0.0, 0.0])
     except Exception:
         perdas = [0.0, 0.0]
+
+    potencia_total_kw = abs(float(potencia_total[0]))
+    potencia_total_kvar = abs(float(potencia_total[1]))
+
+    perdas_kw = abs(float(perdas[0])) / 1000
+    perdas_kvar = abs(float(perdas[1])) / 1000
+
+    potencia_total_mw = potencia_total_kw / 1000
+    potencia_total_mvar = potencia_total_kvar / 1000
+
+    perdas_mw = perdas_kw / 1000
+    perdas_mvar = perdas_kvar / 1000
+
+    perdas_percentual = calcular_percentual_perdas(
+        perdas_kw=perdas_kw,
+        potencia_total_kw=potencia_total_kw,
+    )
 
     tensoes_validas = obter_tensoes_validas()
 
@@ -257,20 +367,66 @@ def coletar_resumo_simulacao(
     return {
         "simulacao": numero_simulacao,
         "circuito": obter_nome_circuito(),
+        "hora_simulacao": obter_hora_simulacao(),
         "convergiu": bool(dss.Solution.Converged()),
         "quantidade_barras": int(dss.Circuit.NumBuses()),
         "quantidade_nos": obter_quantidade_nos(),
-        "potencia_total_kw": float(potencia_total[0]),
-        "potencia_total_kvar": float(potencia_total[1]),
-        "perdas_kw": float(perdas[0]) / 1000,
-        "perdas_kvar": float(perdas[1]) / 1000,
+
+        "potencia_total_kw": potencia_total_kw,
+        "potencia_total_kvar": potencia_total_kvar,
+        "potencia_total_mw": potencia_total_mw,
+        "potencia_total_mvar": potencia_total_mvar,
+
+        "perdas_kw": perdas_kw,
+        "perdas_kvar": perdas_kvar,
+        "perdas_mw": perdas_mw,
+        "perdas_mvar": perdas_mvar,
+        "perdas_percentual": perdas_percentual,
+
         "tensao_minima_pu": tensao_minima,
         "tensao_maxima_pu": tensao_maxima,
         "iteracoes": iteracoes,
+
         "tempo_preparacao_segundos": tempo_preparacao_segundos,
+        "tempo_compilacao_segundos": tempo_compilacao_segundos,
         "tempo_solve_segundos": tempo_solve_segundos,
+
+        "arquivo_cargas_ev": str(arquivo_cargas_ev),
         "arquivo_bus_marker": str(arquivo_bus_marker),
     }
+
+
+def colunas_resultado() -> list[str]:
+    return [
+        "simulacao",
+        "circuito",
+        "hora_simulacao",
+        "convergiu",
+        "quantidade_barras",
+        "quantidade_nos",
+
+        "potencia_total_kw",
+        "potencia_total_kvar",
+        "potencia_total_mw",
+        "potencia_total_mvar",
+
+        "perdas_kw",
+        "perdas_kvar",
+        "perdas_mw",
+        "perdas_mvar",
+        "perdas_percentual",
+
+        "tensao_minima_pu",
+        "tensao_maxima_pu",
+        "iteracoes",
+
+        "tempo_preparacao_segundos",
+        "tempo_compilacao_segundos",
+        "tempo_solve_segundos",
+
+        "arquivo_cargas_ev",
+        "arquivo_bus_marker",
+    ]
 
 
 def salvar_checkpoint_resultado(
@@ -279,23 +435,7 @@ def salvar_checkpoint_resultado(
 ) -> None:
     arquivo_existe = arquivo_checkpoint.exists()
 
-    colunas = [
-        "simulacao",
-        "circuito",
-        "convergiu",
-        "quantidade_barras",
-        "quantidade_nos",
-        "potencia_total_kw",
-        "potencia_total_kvar",
-        "perdas_kw",
-        "perdas_kvar",
-        "tensao_minima_pu",
-        "tensao_maxima_pu",
-        "iteracoes",
-        "tempo_preparacao_segundos",
-        "tempo_solve_segundos",
-        "arquivo_bus_marker",
-    ]
+    colunas = colunas_resultado()
 
     with open(
         arquivo_checkpoint,
@@ -329,23 +469,7 @@ def salvar_resumo_simulacoes(
         / "Resumo_Simulacoes_OpenDSSDirect.csv"
     )
 
-    colunas = [
-        "simulacao",
-        "circuito",
-        "convergiu",
-        "quantidade_barras",
-        "quantidade_nos",
-        "potencia_total_kw",
-        "potencia_total_kvar",
-        "perdas_kw",
-        "perdas_kvar",
-        "tensao_minima_pu",
-        "tensao_maxima_pu",
-        "iteracoes",
-        "tempo_preparacao_segundos",
-        "tempo_solve_segundos",
-        "arquivo_bus_marker",
-    ]
+    colunas = colunas_resultado()
 
     with open(
         arquivo_saida,
@@ -378,21 +502,16 @@ def imprimir_cabecalho(
     quantidade_simulacoes: int,
     diretorio_resultados: Path,
 ) -> None:
+    #print("=" * 80)
+    #print("SIMULAÇÕES OPENDSSDIRECT.PY")
     print("=" * 80)
-    '''
-    print("SIMULAÇÕES OPENDSSDIRECT.PY")
-    print("=" * 80)
-    print("Método: OpenDSSDirect.py / DSS-Extensions")
-    print("Uso de COM: NÃO")
-    print("Necessita OpenDSS instalado via COM: NÃO")
     print(f"Arquivo Master: {arquivo_dss}")
     print(f"Quantidade de cargas EV por cenário: {quantidade_cargas_ev}")
     print(f"Quantidade de simulações: {quantidade_simulacoes}")
     print(f"Diretório de resultados: {diretorio_resultados}")
-    print("O circuito base será compilado apenas uma vez.")
-    print("Em cada cenário será aplicado apenas o Redirect do BusMarkers.")
-    print("=" * 80)
-    '''
+    print("")
+
+
 
 def imprimir_andamento(
     resultado: dict,
@@ -400,14 +519,9 @@ def imprimir_andamento(
 ) -> None:
     simulacao = resultado["simulacao"]
 
-    print(
-        f'Simulação {simulacao:05d}/{quantidade_simulacoes:05d} | '
-        f'Convergiu: {"SIM" if resultado["convergiu"] else "NÃO"} | '
-        f'Tensão min: {resultado["tensao_minima_pu"]:.6f} pu | '
-        f'Tensão max: {resultado["tensao_maxima_pu"]:.6f} pu | '
-        f'Perdas: {resultado["perdas_kw"]:.6f} kW | '
-        f'Prep: {resultado["tempo_preparacao_segundos"]:.3f}s | '
-        f'Solve: {resultado["tempo_solve_segundos"]:.3f}s'
+    imprimir_summary_opendss(
+        resultado=resultado,
+        quantidade_simulacoes=quantidade_simulacoes,
     )
 
     print("")
@@ -452,6 +566,11 @@ def imprimir_resumo_final(
             for resultado in resultados
         ) / total
 
+        tempo_medio_compilacao = sum(
+            resultado["tempo_compilacao_segundos"]
+            for resultado in resultados
+        ) / total
+
         tempo_medio_solve = sum(
             resultado["tempo_solve_segundos"]
             for resultado in resultados
@@ -461,6 +580,7 @@ def imprimir_resumo_final(
         maior_tensao = 0.0
         maior_perda = 0.0
         tempo_medio_preparacao = 0.0
+        tempo_medio_compilacao = 0.0
         tempo_medio_solve = 0.0
 
     simulacoes_por_segundo = (
@@ -479,6 +599,7 @@ def imprimir_resumo_final(
     print(f"Maior tensão encontrada: {maior_tensao:.6f} pu")
     print(f"Maior perda encontrada: {maior_perda:.6f} kW")
     print(f"Tempo médio preparação: {tempo_medio_preparacao:.6f} s")
+    print(f"Tempo médio compile/redirect: {tempo_medio_compilacao:.6f} s")
     print(f"Tempo médio solve: {tempo_medio_solve:.6f} s")
     print(f"Tempo total: {tempo_total_segundos:.2f} segundos")
     print(f"Simulações por segundo: {simulacoes_por_segundo:.4f}")
@@ -527,10 +648,6 @@ def executar_simulacoes_odss(
 
     tempo_inicio_total = time.perf_counter()
 
-    compilar_circuito_base(
-        arquivo_dss=arquivo_dss,
-    )
-
     resultados = []
 
     for numero_simulacao in range(
@@ -539,7 +656,7 @@ def executar_simulacoes_odss(
     ):
         tempo_inicio_preparacao = time.perf_counter()
 
-        arquivo_bus_marker = preparar_cenario(
+        arquivos_cenario = preparar_cenario(
             numero_simulacao=numero_simulacao,
             quantidade_cargas_ev=quantidade_cargas_ev,
             diretorio_resultados=diretorio_resultados,
@@ -547,9 +664,18 @@ def executar_simulacoes_odss(
 
         tempo_fim_preparacao = time.perf_counter()
 
-        aplicar_redirect_bus_marker(
+        arquivo_cargas_ev = arquivos_cenario["arquivo_cargas_ev"]
+        arquivo_bus_marker = arquivos_cenario["arquivo_bus_marker"]
+
+        tempo_inicio_compilacao = time.perf_counter()
+
+        compilar_circuito_simulacao(
+            arquivo_dss=arquivo_dss,
+            arquivo_cargas_ev=arquivo_cargas_ev,
             arquivo_bus_marker=arquivo_bus_marker,
         )
+
+        tempo_fim_compilacao = time.perf_counter()
 
         tempo_inicio_solve = time.perf_counter()
 
@@ -559,10 +685,15 @@ def executar_simulacoes_odss(
 
         resultado = coletar_resumo_simulacao(
             numero_simulacao=numero_simulacao,
+            arquivo_cargas_ev=arquivo_cargas_ev,
             arquivo_bus_marker=arquivo_bus_marker,
             tempo_preparacao_segundos=(
                 tempo_fim_preparacao
                 - tempo_inicio_preparacao
+            ),
+            tempo_compilacao_segundos=(
+                tempo_fim_compilacao
+                - tempo_inicio_compilacao
             ),
             tempo_solve_segundos=(
                 tempo_fim_solve

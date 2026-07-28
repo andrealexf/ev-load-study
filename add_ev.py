@@ -210,7 +210,7 @@ def montar_linha_ev(
         f"status=variable "
         f"vmaxpu=1.5 "
         f"vminpu=0.92 "
-        f'daily="{daily_ev}"'
+        #f'daily="{daily_ev}"'
     )
 
     return linha_ev

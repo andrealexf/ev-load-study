@@ -51,6 +51,7 @@ def main():
         arquivo_dss=ARQUIVO_MASTER_DSS,
         quantidade_cargas_ev=quantidade_cargas,
         quantidade_simulacoes=2,
+        horas_simulacao=[19, 20, 21, 22],
     )
 
 

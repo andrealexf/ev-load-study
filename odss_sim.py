@@ -29,6 +29,10 @@ from add_bus_marker import (
 )
 
 
+SEED_BASE_SIMULACAO = 10000
+TENSAO_MINIMA_CONSIDERADA_PU = 0.4
+
+
 def criar_diretorio_resultados(
     arquivo_dss: Path,
 ) -> Path:
@@ -45,6 +49,12 @@ def criar_diretorio_resultados(
     )
 
     return diretorio_resultados
+
+
+def gerar_seed_simulacao(
+    numero_simulacao: int,
+) -> int:
+    return SEED_BASE_SIMULACAO + numero_simulacao
 
 
 def obter_ultimo_erro_dss() -> str:
@@ -99,13 +109,31 @@ def limpar_circuito() -> None:
     )
 
 
+def executar_solve(
+    hora_simulacao: float,
+) -> bool:
+    executar_comando_dss("Set Mode=Daily")
+    executar_comando_dss("Set Number=1")
+    executar_comando_dss("Set Stepsize=1h")
+    executar_comando_dss(f"Set Hour={hora_simulacao}")
+
+    dss.Solution.Solve()
+
+    return bool(dss.Solution.Converged())
+
+
 def preparar_cenario(
     numero_simulacao: int,
     quantidade_cargas_ev: int,
     diretorio_resultados: Path,
 ) -> dict:
+    seed_simulacao = gerar_seed_simulacao(
+        numero_simulacao=numero_simulacao,
+    )
+
     executar_add_ev(
         quantidade=quantidade_cargas_ev,
+        seed=seed_simulacao,
     )
 
     executar_search_segbt()
@@ -130,12 +158,12 @@ def preparar_cenario(
 
     arquivo_cargas_ev_simulacao = (
         diretorio_resultados
-        / f"Cargas_EV_Sim_{numero_simulacao:05d}.dss"
+        / f"Cargas_EV_Sim_{numero_simulacao:05d}_{seed_simulacao:05d}.dss"
     )
 
     arquivo_bus_marker_simulacao = (
         diretorio_resultados
-        / f"BusMarkers_EV_Sim_{numero_simulacao:05d}.dss"
+        / f"BusMarkers_EV_Sim_{numero_simulacao:05d}_{seed_simulacao:05d}.dss"
     )
 
     shutil.copyfile(
@@ -149,9 +177,43 @@ def preparar_cenario(
     )
 
     return {
+        "numero_simulacao": numero_simulacao,
+        "seed_simulacao": seed_simulacao,
         "arquivo_cargas_ev": arquivo_cargas_ev_simulacao,
         "arquivo_bus_marker": arquivo_bus_marker_simulacao,
     }
+
+
+def preparar_cenarios(
+    quantidade_simulacoes: int,
+    quantidade_cargas_ev: int,
+    diretorio_resultados: Path,
+) -> list[dict]:
+    cenarios = []
+
+    for numero_simulacao in range(1, quantidade_simulacoes + 1):
+        print("")
+        print("=" * 80)
+        print(f"PREPARANDO CENÁRIO {numero_simulacao:05d}/{quantidade_simulacoes:05d}")
+        print("=" * 80)
+
+        tempo_inicio = time.perf_counter()
+
+        arquivos_cenario = preparar_cenario(
+            numero_simulacao=numero_simulacao,
+            quantidade_cargas_ev=quantidade_cargas_ev,
+            diretorio_resultados=diretorio_resultados,
+        )
+
+        tempo_fim = time.perf_counter()
+
+        arquivos_cenario["tempo_preparacao_segundos"] = (
+            tempo_fim - tempo_inicio
+        )
+
+        cenarios.append(arquivos_cenario)
+
+    return cenarios
 
 
 def compilar_circuito_simulacao(
@@ -208,14 +270,8 @@ def compilar_circuito_simulacao(
     )
 
 
-def executar_solve() -> bool:
-    dss.Solution.Solve()
-
-    return bool(dss.Solution.Converged())
-
-
 def obter_tensoes_validas(
-    limite_minimo_pu: float = 0.4,
+    limite_minimo_pu: float = TENSAO_MINIMA_CONSIDERADA_PU,
 ) -> list[float]:
     try:
         tensoes = list(dss.Circuit.AllBusMagPu() or [])
@@ -254,64 +310,14 @@ def obter_nome_circuito() -> str:
     except Exception:
         return ""
 
-def obter_hora_simulacao() -> float:
-    try:
-        return float(dss.Solution.DblHour())
-    except Exception:
-        try:
-            return float(dss.Solution.Hour())
-        except Exception:
-            return 0.0
-
-
-def calcular_percentual_perdas(
-    perdas_kw: float,
-    potencia_total_kw: float,
-) -> float:
-    potencia_base = abs(potencia_total_kw)
-
-    if potencia_base <= 0:
-        return 0.0
-
-    return abs(perdas_kw) / potencia_base * 100
-
-
-def imprimir_summary_opendss(
-    resultado: dict,
-    quantidade_simulacoes: int,
-) -> None:
-    simulacao = resultado["simulacao"]
-
-    print("")
-    print(
-        f"SUMMARY OPENDSS - "
-        f"Simulação {simulacao:05d}/{quantidade_simulacoes:05d}"
-    )
-    print("-" * 80)
-    print(f'Hour = {resultado["hora_simulacao"]:.6g}')
-    print(f'Max pu. voltage = {resultado["tensao_maxima_pu"]:.6g}')
-    print(f'Min pu. voltage = {resultado["tensao_minima_pu"]:.6g}')
-    print(
-        "Total Active Power:   "
-        f'{resultado["potencia_total_mw"]:.6f} MW'
-    )
-    print(
-        "Total Reactive Power: "
-        f'{resultado["potencia_total_mvar"]:.6f} Mvar'
-    )
-    print(
-        "Total Active Losses:   "
-        f'{resultado["perdas_mw"]:.6f} MW, '
-        f'({resultado["perdas_percentual"]:.3f} %)'
-    )
-    print(
-        "Total Reactive Losses: "
-        f'{resultado["perdas_mvar"]:.6f} Mvar'
-    )
-    print("-" * 80)
 
 def coletar_resumo_simulacao(
+    simulacao_global: int,
+    total_execucoes: int,
     numero_simulacao: int,
+    seed_simulacao: int,
+    quantidade_simulacoes: int,
+    hora_simulacao: float,
     arquivo_cargas_ev: Path,
     arquivo_bus_marker: Path,
     tempo_preparacao_segundos: float,
@@ -340,12 +346,14 @@ def coletar_resumo_simulacao(
     perdas_mw = perdas_kw / 1000
     perdas_mvar = perdas_kvar / 1000
 
-    perdas_percentual = calcular_percentual_perdas(
-        perdas_kw=perdas_kw,
-        potencia_total_kw=potencia_total_kw,
-    )
+    if potencia_total_kw > 0:
+        perdas_percentual = perdas_kw / potencia_total_kw * 100
+    else:
+        perdas_percentual = 0.0
 
-    tensoes_validas = obter_tensoes_validas()
+    tensoes_validas = obter_tensoes_validas(
+        limite_minimo_pu=TENSAO_MINIMA_CONSIDERADA_PU,
+    )
 
     tensao_minima = (
         min(tensoes_validas)
@@ -365,9 +373,13 @@ def coletar_resumo_simulacao(
         iteracoes = 0
 
     return {
-        "simulacao": numero_simulacao,
+        "simulacao": simulacao_global,
+        "total_execucoes": total_execucoes,
+        "simulacao_horario": numero_simulacao,
+        "seed_simulacao": seed_simulacao,
+        "simulacoes_por_horario": quantidade_simulacoes,
+        "hora_simulacao": hora_simulacao,
         "circuito": obter_nome_circuito(),
-        "hora_simulacao": obter_hora_simulacao(),
         "convergiu": bool(dss.Solution.Converged()),
         "quantidade_barras": int(dss.Circuit.NumBuses()),
         "quantidade_nos": obter_quantidade_nos(),
@@ -399,8 +411,12 @@ def coletar_resumo_simulacao(
 def colunas_resultado() -> list[str]:
     return [
         "simulacao",
-        "circuito",
+        "total_execucoes",
+        "simulacao_horario",
+        "seed_simulacao",
+        "simulacoes_por_horario",
         "hora_simulacao",
+        "circuito",
         "convergiu",
         "quantidade_barras",
         "quantidade_nos",
@@ -501,27 +517,82 @@ def imprimir_cabecalho(
     quantidade_cargas_ev: int,
     quantidade_simulacoes: int,
     diretorio_resultados: Path,
+    horas_simulacao: list[float],
 ) -> None:
-    #print("=" * 80)
-    #print("SIMULAÇÕES OPENDSSDIRECT.PY")
+    print("=" * 80)
+    print("SIMULAÇÕES OPENDSSDIRECT.PY")
     print("=" * 80)
     print(f"Arquivo Master: {arquivo_dss}")
     print(f"Quantidade de cargas EV por cenário: {quantidade_cargas_ev}")
-    print(f"Quantidade de simulações: {quantidade_simulacoes}")
+    print(f"Quantidade de cenários: {quantidade_simulacoes}")
+    print(f"Horários simulados: {horas_simulacao}")
+    print(f"Total de execuções elétricas: {quantidade_simulacoes * len(horas_simulacao)}")
     print(f"Diretório de resultados: {diretorio_resultados}")
-    print("")
+    print("Em cada execução será aplicado:")
+    print("- Redirect do Cargas_EV_Sim_XXXXX_SEED.dss")
+    print("- Redirect do BusMarkers_EV_Sim_XXXXX_SEED.dss")
+    print("=" * 80)
 
+
+def imprimir_summary_opendss(
+    resultado: dict,
+) -> None:
+    print("")
+    print(
+        f'SUMMARY OPENDSS - '
+        f'Hora {resultado["hora_simulacao"]:.0f}h - '
+        f'Simulação {resultado["simulacao_horario"]:05d}/'
+        f'{resultado["simulacoes_por_horario"]:05d} - '
+        f'Seed {resultado["seed_simulacao"]:05d} - '
+        f'Execução {resultado["simulacao"]:05d}/'
+        f'{resultado["total_execucoes"]:05d}'
+    )
+    print("-" * 80)
+    print(f'Hour = {resultado["hora_simulacao"]:.6g}')
+    print(f'Max pu. voltage = {resultado["tensao_maxima_pu"]:.6g}')
+    print(f'Min pu. voltage = {resultado["tensao_minima_pu"]:.6g}')
+    print(
+        "Total Active Power:   "
+        f'{resultado["potencia_total_mw"]:.6f} MW'
+    )
+    print(
+        "Total Reactive Power: "
+        f'{resultado["potencia_total_mvar"]:.6f} Mvar'
+    )
+    print(
+        "Total Active Losses:   "
+        f'{resultado["perdas_mw"]:.6f} MW, '
+        f'({resultado["perdas_percentual"]:.3f} %)'
+    )
+    print(
+        "Total Reactive Losses: "
+        f'{resultado["perdas_mvar"]:.6f} Mvar'
+    )
+    print("-" * 80)
 
 
 def imprimir_andamento(
     resultado: dict,
-    quantidade_simulacoes: int,
+    total_execucoes: int,
 ) -> None:
-    simulacao = resultado["simulacao"]
+    print(
+        f'Simulação {resultado["simulacao"]:05d}/{total_execucoes:05d} | '
+        f'Hora: {resultado["hora_simulacao"]:.0f}h | '
+        f'Cenário: {resultado["simulacao_horario"]:05d}/'
+        f'{resultado["simulacoes_por_horario"]:05d} | '
+        f'Seed: {resultado["seed_simulacao"]:05d} | '
+        f'Convergiu: {"SIM" if resultado["convergiu"] else "NÃO"} | '
+        f'Tensão min: {resultado["tensao_minima_pu"]:.6f} pu | '
+        f'Tensão max: {resultado["tensao_maxima_pu"]:.6f} pu | '
+        f'Perdas: {resultado["perdas_kw"]:.6f} kW | '
+        f'Perdas %: {resultado["perdas_percentual"]:.3f}% | '
+        f'Prep: {resultado["tempo_preparacao_segundos"]:.3f}s | '
+        f'Compile+Redirect: {resultado["tempo_compilacao_segundos"]:.3f}s | '
+        f'Solve: {resultado["tempo_solve_segundos"]:.3f}s'
+    )
 
     imprimir_summary_opendss(
         resultado=resultado,
-        quantidade_simulacoes=quantidade_simulacoes,
     )
 
     print("")
@@ -592,7 +663,7 @@ def imprimir_resumo_final(
     print("\n" + "=" * 80)
     print("SIMULAÇÕES FINALIZADAS")
     print("=" * 80)
-    print(f"Total de simulações executadas: {total}")
+    print(f"Total de execuções elétricas: {total}")
     print(f"Convergentes: {total_convergente}")
     print(f"Não convergentes: {total_nao_convergente}")
     print(f"Menor tensão encontrada: {menor_tensao:.6f} pu")
@@ -602,7 +673,7 @@ def imprimir_resumo_final(
     print(f"Tempo médio compile/redirect: {tempo_medio_compilacao:.6f} s")
     print(f"Tempo médio solve: {tempo_medio_solve:.6f} s")
     print(f"Tempo total: {tempo_total_segundos:.2f} segundos")
-    print(f"Simulações por segundo: {simulacoes_por_segundo:.4f}")
+    print(f"Execuções por segundo: {simulacoes_por_segundo:.4f}")
     print(f"Arquivo resumo final: {arquivo_resumo}")
     print(f"Arquivo checkpoint: {arquivo_checkpoint}")
     print("=" * 80)
@@ -612,8 +683,12 @@ def executar_simulacoes_odss(
     arquivo_dss: Path,
     quantidade_cargas_ev: int,
     quantidade_simulacoes: int = 6000,
+    horas_simulacao: list[float] | None = None,
 ) -> list[dict]:
     arquivo_dss = Path(arquivo_dss).resolve()
+
+    if horas_simulacao is None:
+        horas_simulacao = [19, 20, 21, 22]
 
     if not arquivo_dss.exists():
         raise FileNotFoundError(
@@ -630,6 +705,11 @@ def executar_simulacoes_odss(
             "A quantidade de simulações precisa ser maior que zero."
         )
 
+    if not horas_simulacao:
+        raise ValueError(
+            "Informe pelo menos um horário de simulação."
+        )
+
     diretorio_resultados = criar_diretorio_resultados(
         arquivo_dss=arquivo_dss,
     )
@@ -639,84 +719,97 @@ def executar_simulacoes_odss(
         / "Checkpoint_Simulacoes_OpenDSSDirect.csv"
     )
 
+    total_execucoes = quantidade_simulacoes * len(horas_simulacao)
+
     imprimir_cabecalho(
         arquivo_dss=arquivo_dss,
         quantidade_cargas_ev=quantidade_cargas_ev,
         quantidade_simulacoes=quantidade_simulacoes,
         diretorio_resultados=diretorio_resultados,
+        horas_simulacao=horas_simulacao,
     )
 
     tempo_inicio_total = time.perf_counter()
 
+    cenarios = preparar_cenarios(
+        quantidade_simulacoes=quantidade_simulacoes,
+        quantidade_cargas_ev=quantidade_cargas_ev,
+        diretorio_resultados=diretorio_resultados,
+    )
+
     resultados = []
 
-    for numero_simulacao in range(
-        1,
-        quantidade_simulacoes + 1,
-    ):
-        tempo_inicio_preparacao = time.perf_counter()
+    simulacao_global = 0
 
-        arquivos_cenario = preparar_cenario(
-            numero_simulacao=numero_simulacao,
-            quantidade_cargas_ev=quantidade_cargas_ev,
-            diretorio_resultados=diretorio_resultados,
-        )
+    for hora_simulacao in horas_simulacao:
+        print("")
+        print("=" * 80)
+        print(f"INICIANDO SIMULAÇÕES PARA {hora_simulacao:.0f}h")
+        print("=" * 80)
 
-        tempo_fim_preparacao = time.perf_counter()
+        for cenario in cenarios:
+            simulacao_global += 1
 
-        arquivo_cargas_ev = arquivos_cenario["arquivo_cargas_ev"]
-        arquivo_bus_marker = arquivos_cenario["arquivo_bus_marker"]
+            numero_simulacao = cenario["numero_simulacao"]
+            seed_simulacao = cenario["seed_simulacao"]
+            arquivo_cargas_ev = cenario["arquivo_cargas_ev"]
+            arquivo_bus_marker = cenario["arquivo_bus_marker"]
+            tempo_preparacao = cenario["tempo_preparacao_segundos"]
 
-        tempo_inicio_compilacao = time.perf_counter()
+            tempo_inicio_compilacao = time.perf_counter()
 
-        compilar_circuito_simulacao(
-            arquivo_dss=arquivo_dss,
-            arquivo_cargas_ev=arquivo_cargas_ev,
-            arquivo_bus_marker=arquivo_bus_marker,
-        )
-
-        tempo_fim_compilacao = time.perf_counter()
-
-        tempo_inicio_solve = time.perf_counter()
-
-        executar_solve()
-
-        tempo_fim_solve = time.perf_counter()
-
-        resultado = coletar_resumo_simulacao(
-            numero_simulacao=numero_simulacao,
-            arquivo_cargas_ev=arquivo_cargas_ev,
-            arquivo_bus_marker=arquivo_bus_marker,
-            tempo_preparacao_segundos=(
-                tempo_fim_preparacao
-                - tempo_inicio_preparacao
-            ),
-            tempo_compilacao_segundos=(
-                tempo_fim_compilacao
-                - tempo_inicio_compilacao
-            ),
-            tempo_solve_segundos=(
-                tempo_fim_solve
-                - tempo_inicio_solve
-            ),
-        )
-
-        resultados.append(resultado)
-
-        salvar_checkpoint_resultado(
-            resultado=resultado,
-            arquivo_checkpoint=arquivo_checkpoint,
-        )
-
-        if (
-            numero_simulacao <= 10
-            or numero_simulacao == quantidade_simulacoes
-            or numero_simulacao % 100 == 0
-        ):
-            imprimir_andamento(
-                resultado=resultado,
-                quantidade_simulacoes=quantidade_simulacoes,
+            compilar_circuito_simulacao(
+                arquivo_dss=arquivo_dss,
+                arquivo_cargas_ev=arquivo_cargas_ev,
+                arquivo_bus_marker=arquivo_bus_marker,
             )
+
+            tempo_fim_compilacao = time.perf_counter()
+
+            tempo_inicio_solve = time.perf_counter()
+
+            executar_solve(
+                hora_simulacao=hora_simulacao,
+            )
+
+            tempo_fim_solve = time.perf_counter()
+
+            resultado = coletar_resumo_simulacao(
+                simulacao_global=simulacao_global,
+                total_execucoes=total_execucoes,
+                numero_simulacao=numero_simulacao,
+                seed_simulacao=seed_simulacao,
+                quantidade_simulacoes=quantidade_simulacoes,
+                hora_simulacao=hora_simulacao,
+                arquivo_cargas_ev=arquivo_cargas_ev,
+                arquivo_bus_marker=arquivo_bus_marker,
+                tempo_preparacao_segundos=tempo_preparacao,
+                tempo_compilacao_segundos=(
+                    tempo_fim_compilacao
+                    - tempo_inicio_compilacao
+                ),
+                tempo_solve_segundos=(
+                    tempo_fim_solve
+                    - tempo_inicio_solve
+                ),
+            )
+
+            resultados.append(resultado)
+
+            salvar_checkpoint_resultado(
+                resultado=resultado,
+                arquivo_checkpoint=arquivo_checkpoint,
+            )
+
+            if (
+                simulacao_global <= 10
+                or simulacao_global == total_execucoes
+                or simulacao_global % 100 == 0
+            ):
+                imprimir_andamento(
+                    resultado=resultado,
+                    total_execucoes=total_execucoes,
+                )
 
     arquivo_resumo = salvar_resumo_simulacoes(
         resultados=resultados,
@@ -745,6 +838,7 @@ def executar_odss_sim(
         arquivo_dss=arquivo_dss,
         quantidade_cargas_ev=1,
         quantidade_simulacoes=1,
+        horas_simulacao=[19],
     )
 
     return resultados[0]

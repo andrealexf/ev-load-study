@@ -193,7 +193,7 @@ def montar_linha_ev(
 
     bus1 = obter_parametro_linha(linha_original, "bus1")
     conn = obter_parametro_linha(linha_original, "conn", "wye")
-    model = obter_parametro_linha(linha_original, "model", "1")
+    #model = obter_parametro_linha(linha_original, "model", "1")
     kv = obter_parametro_linha(linha_original, "kv")
 
     phases = 3 if bus1.endswith(".1.2.3.4") else 1
@@ -203,14 +203,14 @@ def montar_linha_ev(
         f'bus1="{bus1}" '
         f"phases={phases} "
         f"conn={conn} "
-        f"model={model} "
+        f"model=1 "
         f"kv={kv} "
         f"kw={kw_ev} "
-        f"pf=0.92 "
+        f"pf=1 "
         f"status=variable "
         f"vmaxpu=1.5 "
         f"vminpu=0.92 "
-        #f'daily="{daily_ev}"'
+        f'daily="{daily_ev}"'
     )
 
     return linha_ev
@@ -220,6 +220,7 @@ def selecionar_ramais_aleatorios_validos(
     ramais_arquivo: list[str],
     cargas_por_ramal: dict[str, list[str]],
     quantidade: int,
+    seed: int | None = None,
 ) -> tuple[list[str], list[str]]:
     if quantidade <= 0:
         raise ValueError("A quantidade precisa ser maior que zero.")
@@ -235,7 +236,6 @@ def selecionar_ramais_aleatorios_validos(
     ]
 
     if len(ramais_validos) < quantidade:
-        #print("\nRAMAIS não encontrados no DSS:")
         for ramal in ramais_invalidos:
             print(f"- {ramal}")
 
@@ -244,7 +244,12 @@ def selecionar_ramais_aleatorios_validos(
             f"mas foram solicitadas {quantidade} unidades EV."
         )
 
-    ramais_sorteados = random.sample(ramais_validos, quantidade)
+    sorteador = random.Random(seed)
+
+    ramais_sorteados = sorteador.sample(
+        ramais_validos,
+        quantidade,
+    )
 
     return ramais_sorteados, ramais_invalidos
 
@@ -256,6 +261,7 @@ def gerar_arquivo_ev(
     quantidade: int,
     daily_ev: str = "EV_1",
     kw_total_por_unidade: float = 3.5,
+    seed: int | None = None,
 ) -> None:
     ramais_arquivo = ler_ramais_arquivo(
         arquivo_ramais=arquivo_ramais,
@@ -272,6 +278,7 @@ def gerar_arquivo_ev(
         ramais_arquivo=ramais_arquivo,
         cargas_por_ramal=cargas_por_ramal,
         quantidade=quantidade,
+        seed=seed,
     )
 
     linhas_ev = []
@@ -302,6 +309,7 @@ def gerar_arquivo_ev(
             arquivo.write(linha + "\n")
 
     print(f"Arquivo de saída: {arquivo_saida}")
+    print(f"Seed da simulação: {seed}")
     print(f"Unidades EV criadas: {len(ramais_sorteados)}")
     print(f"Carregadores Load.EV criados: {len(linhas_ev)}")
     print(f"Potência por carregador EV: {kw_total_por_unidade} kW")
@@ -316,7 +324,10 @@ def gerar_arquivo_ev(
     print(f"Total não encontrado: {len(ramais_invalidos)}")
 
 
-def executar_add_ev(quantidade: int) -> None:
+def executar_add_ev(
+    quantidade: int,
+    seed: int | None = None,
+) -> None:
     gerar_arquivo_ev(
         arquivo_entrada=ARQUIVO_ENTRADA_EV,
         arquivo_saida=ARQUIVO_SAIDA_EV,
@@ -324,5 +335,5 @@ def executar_add_ev(quantidade: int) -> None:
         quantidade=quantidade,
         daily_ev="EV_1",
         kw_total_por_unidade=3.5,
+        seed=seed,
     )
-

@@ -1,20 +1,3 @@
-New "Load.EV_BT_1011521_1_M1" bus1="1001011521.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1039374_M1" bus1="1001039374.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_3732288_M1" bus1="1003732288.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_4261173_1_M1" bus1="1004261173.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1012039_M1" bus1="1001012039.3.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_10492598_M1" bus1="1010492598.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1015245_M1" bus1="1001015245.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1019074_M1" bus1="1001019074.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1014076_3_M1" bus1="1001014076.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1042209_M1" bus1="1001042209.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_11191527_M1" bus1="1011191527.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_4593631_1_M1" bus1="1004593631.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_10292795_M1" bus1="1010292795.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1034327_M1" bus1="1001034327.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1051169_M1" bus1="1001051169.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1197189_1_M1" bus1="1001197189.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_4470046_M1" bus1="1004470046.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_991025_1_M1" bus1="1000991025.3.1.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_10841718_M1" bus1="1010841718.3.1.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
-New "Load.EV_BT_1033718_1_M1" bus1="1001033718.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1"
+New "Load.LDV_BT_1011521_1_M1" bus1="1001011521.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=LDV
+New "Load.LDV_BT_1039374_M1" bus1="1001039374.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=LDV
+New "Load.TW_BT_3732288_M1" bus1="1003732288.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=TWO_WHEELER

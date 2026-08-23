@@ -2,7 +2,6 @@ from pathlib import Path
 import csv
 import re
 
-
 DIRETORIO_CODIGO = Path(__file__).resolve().parent
 
 ARQUIVO_CARGAS_EV = DIRETORIO_CODIGO / "Cargas_EV.dss"
@@ -102,27 +101,26 @@ def extrair_nome_line(linha: str) -> str | None:
 
 
 def extrair_ramal_de_nome_load(nome_load: str) -> str:
-    """
-    Extrai o RAMAL a partir do nome da carga EV.
-
-    Exemplos:
-    EV_BT_994308_M1       -> 994308
-    EV_BT_994308_M2       -> 994308
-    EV_BT_994308_1_M1     -> 994308
-    EV_BT_994308_2_M1     -> 994308
-    """
     texto = str(nome_load).strip()
 
-    if texto.upper().startswith("EV_"):
-        texto = texto[3:]
+    prefixos_ev = [
+        "EV_",
+        "LDV_",
+        "TW_",
+        "TWO_WHEELER_",
+        "TWO_WHEELERS_",
+    ]
+
+    for prefixo in prefixos_ev:
+        if texto.upper().startswith(prefixo):
+            texto = texto[len(prefixo):]
+            break
 
     if texto.upper().startswith("BT_"):
         texto = texto[3:]
 
-    # Remove _M1, _M2, etc.
     texto = re.sub(r"_M\d+$", "", texto, flags=re.IGNORECASE)
 
-    # Remove sufixo de repetição _1, _2, etc.
     texto = re.sub(r"_\d+$", "", texto)
 
     return texto.strip()

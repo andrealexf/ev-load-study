@@ -180,11 +180,24 @@ def ler_cargas_por_ramal(
 
     return cargas_por_ramal
 
+def obter_prefixo_tipo_ev(
+    tipo_ev: str,
+) -> str:
+    tipo = str(tipo_ev).strip().upper()
+
+    if tipo == "LDV":
+        return "LDV"
+
+    if tipo in {"TWO_WHEELER", "TWO_WHEELERS", "TW"}:
+        return "TW"
+
+    raise ValueError(f"Tipo de EV não reconhecido: {tipo_ev}")
 
 def montar_linha_ev(
     linha_original: str,
     kw_ev: float,
     daily_ev: str,
+    tipo_ev: str,
 ) -> str:
     nome_carga = extrair_nome_carga(linha_original)
 
@@ -193,13 +206,18 @@ def montar_linha_ev(
 
     bus1 = obter_parametro_linha(linha_original, "bus1")
     conn = obter_parametro_linha(linha_original, "conn", "wye")
-    #model = obter_parametro_linha(linha_original, "model", "1")
     kv = obter_parametro_linha(linha_original, "kv")
 
     phases = 3 if bus1.endswith(".1.2.3.4") else 1
 
+    prefixo_ev = obter_prefixo_tipo_ev(
+        tipo_ev=tipo_ev,
+    )
+
+    nome_ev = f"{prefixo_ev}_{nome_carga}"
+
     linha_ev = (
-        f'New "Load.EV_{nome_carga}" '
+        f'New "Load.{nome_ev}" '
         f'bus1="{bus1}" '
         f"phases={phases} "
         f"conn={conn} "
@@ -210,7 +228,8 @@ def montar_linha_ev(
         f"status=variable "
         f"vmaxpu=1.5 "
         f"vminpu=0.92 "
-        f'daily="{daily_ev}"'
+        f'daily="{daily_ev}" '
+        f"! tipo={tipo_ev}"
     )
 
     return linha_ev
@@ -219,11 +238,22 @@ def montar_linha_ev(
 def selecionar_ramais_aleatorios_validos(
     ramais_arquivo: list[str],
     cargas_por_ramal: dict[str, list[str]],
-    quantidade: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     seed: int | None = None,
-) -> tuple[list[str], list[str]]:
-    if quantidade <= 0:
-        raise ValueError("A quantidade precisa ser maior que zero.")
+) -> tuple[list[str], list[str], list[str]]:
+    if quantidade_ldv < 0:
+        raise ValueError("A quantidade de LDVs não pode ser negativa.")
+
+    if quantidade_two_wheelers < 0:
+        raise ValueError("A quantidade de Two Wheelers não pode ser negativa.")
+
+    quantidade_total = quantidade_ldv + quantidade_two_wheelers
+
+    if quantidade_total <= 0:
+        raise ValueError(
+            "A soma de LDVs e Two Wheelers precisa ser maior que zero."
+        )
 
     ramais_validos = [
         ramal for ramal in ramais_arquivo
@@ -235,32 +265,71 @@ def selecionar_ramais_aleatorios_validos(
         if ramal not in cargas_por_ramal
     ]
 
-    if len(ramais_validos) < quantidade:
+    if len(ramais_validos) < quantidade_total:
         for ramal in ramais_invalidos:
             print(f"- {ramal}")
 
         raise ValueError(
             f"Existem apenas {len(ramais_validos)} RAMAIS válidos no DSS, "
-            f"mas foram solicitadas {quantidade} unidades EV."
+            f"mas foram solicitadas {quantidade_total} unidades EV."
         )
 
     sorteador = random.Random(seed)
 
     ramais_sorteados = sorteador.sample(
         ramais_validos,
-        quantidade,
+        quantidade_total,
     )
 
-    return ramais_sorteados, ramais_invalidos
+    ramais_ldv = ramais_sorteados[:quantidade_ldv]
+
+    ramais_two_wheelers = ramais_sorteados[
+        quantidade_ldv:
+        quantidade_ldv + quantidade_two_wheelers
+    ]
+
+    return ramais_ldv, ramais_two_wheelers, ramais_invalidos
+
+
+def gerar_linhas_ev_por_tipo(
+    ramais: list[str],
+    cargas_por_ramal: dict[str, list[str]],
+    kw_ev: float,
+    daily_ev: str,
+    tipo_ev: str,
+) -> list[str]:
+    linhas_ev = []
+
+    for ramal in ramais:
+        linhas_carga = cargas_por_ramal[ramal]
+
+        if not linhas_carga:
+            continue
+
+        linha_original = linhas_carga[0]
+
+        linha_ev = montar_linha_ev(
+            linha_original=linha_original,
+            kw_ev=kw_ev,
+            daily_ev=daily_ev,
+            tipo_ev=tipo_ev,
+        )
+
+        linhas_ev.append(linha_ev)
+
+    return linhas_ev
 
 
 def gerar_arquivo_ev(
     arquivo_entrada: Path,
     arquivo_saida: Path,
     arquivo_ramais: Path,
-    quantidade: int,
-    daily_ev: str = "EV_1",
-    kw_total_por_unidade: float = 3.5,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
+    daily_ldv: str = "EV_1",
+    daily_two_wheelers: str = "EV_1",
+    kw_ldv: float = 3.5,
+    kw_two_wheelers: float = 2.0,
     seed: int | None = None,
 ) -> None:
     ramais_arquivo = ler_ramais_arquivo(
@@ -274,30 +343,33 @@ def gerar_arquivo_ev(
         arquivo_entrada=arquivo_entrada,
     )
 
-    ramais_sorteados, ramais_invalidos = selecionar_ramais_aleatorios_validos(
-        ramais_arquivo=ramais_arquivo,
-        cargas_por_ramal=cargas_por_ramal,
-        quantidade=quantidade,
-        seed=seed,
+    ramais_ldv, ramais_two_wheelers, ramais_invalidos = (
+        selecionar_ramais_aleatorios_validos(
+            ramais_arquivo=ramais_arquivo,
+            cargas_por_ramal=cargas_por_ramal,
+            quantidade_ldv=quantidade_ldv,
+            quantidade_two_wheelers=quantidade_two_wheelers,
+            seed=seed,
+        )
     )
 
-    linhas_ev = []
+    linhas_ldv = gerar_linhas_ev_por_tipo(
+        ramais=ramais_ldv,
+        cargas_por_ramal=cargas_por_ramal,
+        kw_ev=kw_ldv,
+        daily_ev=daily_ldv,
+        tipo_ev="LDV",
+    )
 
-    for ramal in ramais_sorteados:
-        linhas_carga = cargas_por_ramal[ramal]
+    linhas_two_wheelers = gerar_linhas_ev_por_tipo(
+        ramais=ramais_two_wheelers,
+        cargas_por_ramal=cargas_por_ramal,
+        kw_ev=kw_two_wheelers,
+        daily_ev=daily_two_wheelers,
+        tipo_ev="TWO_WHEELER",
+    )
 
-        if not linhas_carga:
-            continue
-
-        linha_original = linhas_carga[0]
-
-        linha_ev = montar_linha_ev(
-            linha_original=linha_original,
-            kw_ev=kw_total_por_unidade,
-            daily_ev=daily_ev,
-        )
-
-        linhas_ev.append(linha_ev)
+    linhas_ev = linhas_ldv + linhas_two_wheelers
 
     if not linhas_ev:
         raise ValueError("Nenhuma linha EV foi gerada.")
@@ -310,30 +382,43 @@ def gerar_arquivo_ev(
 
     print(f"Arquivo de saída: {arquivo_saida}")
     print(f"Seed da simulação: {seed}")
-    print(f"Unidades EV criadas: {len(ramais_sorteados)}")
-    print(f"Carregadores Load.EV criados: {len(linhas_ev)}")
-    print(f"Potência por carregador EV: {kw_total_por_unidade} kW")
+    print(f"LDVs criados: {len(linhas_ldv)}")
+    print(f"Two Wheelers criados: {len(linhas_two_wheelers)}")
+    print(f"Total de carregadores Load.EV criados: {len(linhas_ev)}")
+    print(f"Potência por LDV: {kw_ldv} kW")
+    print(f"Potência por Two Wheeler: {kw_two_wheelers} kW")
+    print("Configuração elétrica das cargas adicionadas: model=1, pf=1")
 
-    print("\nRAMAIS selecionados para receber unidade EV:")
-    print(f"Total selecionado: {len(ramais_sorteados)}")
+    print("\nRAMAIS selecionados para LDV:")
+    print(f"Total LDV: {len(ramais_ldv)}")
 
-    for indice, ramal in enumerate(ramais_sorteados, start=1):
-        print(f"EV {indice}: RAMAL {ramal}")
+    for indice, ramal in enumerate(ramais_ldv, start=1):
+        print(f"LDV {indice}: RAMAL {ramal}")
+
+    print("\nRAMAIS selecionados para Two Wheeler:")
+    print(f"Total Two Wheeler: {len(ramais_two_wheelers)}")
+
+    for indice, ramal in enumerate(ramais_two_wheelers, start=1):
+        print(f"Two Wheeler {indice}: RAMAL {ramal}")
 
     print("")
     print(f"Total não encontrado: {len(ramais_invalidos)}")
 
 
 def executar_add_ev(
-    quantidade: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     seed: int | None = None,
 ) -> None:
     gerar_arquivo_ev(
         arquivo_entrada=ARQUIVO_ENTRADA_EV,
         arquivo_saida=ARQUIVO_SAIDA_EV,
         arquivo_ramais=ARQUIVO_TXT_RAMAIS,
-        quantidade=quantidade,
-        daily_ev="EV_1",
-        kw_total_por_unidade=3.5,
+        quantidade_ldv=quantidade_ldv,
+        quantidade_two_wheelers=quantidade_two_wheelers,
+        daily_ldv="EV_1",
+        daily_two_wheelers="EV_1",
+        kw_ldv=3.5,
+        kw_two_wheelers=2.0,
         seed=seed,
     )

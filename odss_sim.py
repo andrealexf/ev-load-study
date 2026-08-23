@@ -124,7 +124,8 @@ def executar_solve(
 
 def preparar_cenario(
     numero_simulacao: int,
-    quantidade_cargas_ev: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     diretorio_resultados: Path,
 ) -> dict:
     seed_simulacao = gerar_seed_simulacao(
@@ -132,7 +133,8 @@ def preparar_cenario(
     )
 
     executar_add_ev(
-        quantidade=quantidade_cargas_ev,
+        quantidade_ldv=quantidade_ldv,
+        quantidade_two_wheelers=quantidade_two_wheelers,
         seed=seed_simulacao,
     )
 
@@ -179,6 +181,8 @@ def preparar_cenario(
     return {
         "numero_simulacao": numero_simulacao,
         "seed_simulacao": seed_simulacao,
+        "quantidade_ldv": quantidade_ldv,
+        "quantidade_two_wheelers": quantidade_two_wheelers,
         "arquivo_cargas_ev": arquivo_cargas_ev_simulacao,
         "arquivo_bus_marker": arquivo_bus_marker_simulacao,
     }
@@ -186,7 +190,8 @@ def preparar_cenario(
 
 def preparar_cenarios(
     quantidade_simulacoes: int,
-    quantidade_cargas_ev: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     diretorio_resultados: Path,
 ) -> list[dict]:
     cenarios = []
@@ -201,7 +206,8 @@ def preparar_cenarios(
 
         arquivos_cenario = preparar_cenario(
             numero_simulacao=numero_simulacao,
-            quantidade_cargas_ev=quantidade_cargas_ev,
+            quantidade_ldv=quantidade_ldv,
+            quantidade_two_wheelers=quantidade_two_wheelers,
             diretorio_resultados=diretorio_resultados,
         )
 
@@ -317,6 +323,8 @@ def coletar_resumo_simulacao(
     numero_simulacao: int,
     seed_simulacao: int,
     quantidade_simulacoes: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     hora_simulacao: float,
     arquivo_cargas_ev: Path,
     arquivo_bus_marker: Path,
@@ -372,12 +380,17 @@ def coletar_resumo_simulacao(
     except Exception:
         iteracoes = 0
 
+    quantidade_total_ev = quantidade_ldv + quantidade_two_wheelers
+
     return {
         "simulacao": simulacao_global,
         "total_execucoes": total_execucoes,
         "simulacao_horario": numero_simulacao,
         "seed_simulacao": seed_simulacao,
         "simulacoes_por_horario": quantidade_simulacoes,
+        "quantidade_ldv": quantidade_ldv,
+        "quantidade_two_wheelers": quantidade_two_wheelers,
+        "quantidade_total_ev": quantidade_total_ev,
         "hora_simulacao": hora_simulacao,
         "circuito": obter_nome_circuito(),
         "convergiu": bool(dss.Solution.Converged()),
@@ -415,6 +428,9 @@ def colunas_resultado() -> list[str]:
         "simulacao_horario",
         "seed_simulacao",
         "simulacoes_por_horario",
+        "quantidade_ldv",
+        "quantidade_two_wheelers",
+        "quantidade_total_ev",
         "hora_simulacao",
         "circuito",
         "convergiu",
@@ -514,16 +530,21 @@ def salvar_resumo_simulacoes(
 
 def imprimir_cabecalho(
     arquivo_dss: Path,
-    quantidade_cargas_ev: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     quantidade_simulacoes: int,
     diretorio_resultados: Path,
     horas_simulacao: list[float],
 ) -> None:
+    quantidade_total_ev = quantidade_ldv + quantidade_two_wheelers
+
     print("=" * 80)
     print("SIMULAÇÕES OPENDSSDIRECT.PY")
     print("=" * 80)
     print(f"Arquivo Master: {arquivo_dss}")
-    print(f"Quantidade de cargas EV por cenário: {quantidade_cargas_ev}")
+    print(f"LDVs por cenário: {quantidade_ldv}")
+    print(f"Two Wheelers por cenário: {quantidade_two_wheelers}")
+    print(f"Total EV por cenário: {quantidade_total_ev}")
     print(f"Quantidade de cenários: {quantidade_simulacoes}")
     print(f"Horários simulados: {horas_simulacao}")
     print(f"Total de execuções elétricas: {quantidade_simulacoes * len(horas_simulacao)}")
@@ -581,6 +602,8 @@ def imprimir_andamento(
         f'Cenário: {resultado["simulacao_horario"]:05d}/'
         f'{resultado["simulacoes_por_horario"]:05d} | '
         f'Seed: {resultado["seed_simulacao"]:05d} | '
+        f'LDV: {resultado["quantidade_ldv"]} | '
+        f'Two Wheelers: {resultado["quantidade_two_wheelers"]} | '
         f'Convergiu: {"SIM" if resultado["convergiu"] else "NÃO"} | '
         f'Tensão min: {resultado["tensao_minima_pu"]:.6f} pu | '
         f'Tensão max: {resultado["tensao_maxima_pu"]:.6f} pu | '
@@ -681,7 +704,8 @@ def imprimir_resumo_final(
 
 def executar_simulacoes_odss(
     arquivo_dss: Path,
-    quantidade_cargas_ev: int,
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
     quantidade_simulacoes: int = 6000,
     horas_simulacao: list[float] | None = None,
 ) -> list[dict]:
@@ -695,9 +719,15 @@ def executar_simulacoes_odss(
             f"Arquivo Master do OpenDSS não encontrado:\n{arquivo_dss}"
         )
 
-    if quantidade_cargas_ev <= 0:
+    if quantidade_ldv < 0:
+        raise ValueError("A quantidade de LDVs não pode ser negativa.")
+
+    if quantidade_two_wheelers < 0:
+        raise ValueError("A quantidade de Two Wheelers não pode ser negativa.")
+
+    if quantidade_ldv + quantidade_two_wheelers <= 0:
         raise ValueError(
-            "A quantidade de cargas EV precisa ser maior que zero."
+            "A soma de LDVs e Two Wheelers precisa ser maior que zero."
         )
 
     if quantidade_simulacoes <= 0:
@@ -723,7 +753,8 @@ def executar_simulacoes_odss(
 
     imprimir_cabecalho(
         arquivo_dss=arquivo_dss,
-        quantidade_cargas_ev=quantidade_cargas_ev,
+        quantidade_ldv=quantidade_ldv,
+        quantidade_two_wheelers=quantidade_two_wheelers,
         quantidade_simulacoes=quantidade_simulacoes,
         diretorio_resultados=diretorio_resultados,
         horas_simulacao=horas_simulacao,
@@ -733,7 +764,8 @@ def executar_simulacoes_odss(
 
     cenarios = preparar_cenarios(
         quantidade_simulacoes=quantidade_simulacoes,
-        quantidade_cargas_ev=quantidade_cargas_ev,
+        quantidade_ldv=quantidade_ldv,
+        quantidade_two_wheelers=quantidade_two_wheelers,
         diretorio_resultados=diretorio_resultados,
     )
 
@@ -752,6 +784,8 @@ def executar_simulacoes_odss(
 
             numero_simulacao = cenario["numero_simulacao"]
             seed_simulacao = cenario["seed_simulacao"]
+            quantidade_ldv_cenario = cenario["quantidade_ldv"]
+            quantidade_two_wheelers_cenario = cenario["quantidade_two_wheelers"]
             arquivo_cargas_ev = cenario["arquivo_cargas_ev"]
             arquivo_bus_marker = cenario["arquivo_bus_marker"]
             tempo_preparacao = cenario["tempo_preparacao_segundos"]
@@ -780,6 +814,8 @@ def executar_simulacoes_odss(
                 numero_simulacao=numero_simulacao,
                 seed_simulacao=seed_simulacao,
                 quantidade_simulacoes=quantidade_simulacoes,
+                quantidade_ldv=quantidade_ldv_cenario,
+                quantidade_two_wheelers=quantidade_two_wheelers_cenario,
                 hora_simulacao=hora_simulacao,
                 arquivo_cargas_ev=arquivo_cargas_ev,
                 arquivo_bus_marker=arquivo_bus_marker,
@@ -836,7 +872,8 @@ def executar_odss_sim(
 ) -> dict:
     resultados = executar_simulacoes_odss(
         arquivo_dss=arquivo_dss,
-        quantidade_cargas_ev=1,
+        quantidade_ldv=1,
+        quantidade_two_wheelers=0,
         quantidade_simulacoes=1,
         horas_simulacao=[19],
     )

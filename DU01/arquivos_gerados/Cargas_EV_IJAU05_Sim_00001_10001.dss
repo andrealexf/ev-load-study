@@ -1,0 +1,11 @@
+New "Load.LDV_BT_4440240_1_M1_IJAU05_1004440240_004926" bus1="1004440240.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.LDV_BT_6280936_2_M1_IJAU05_1006280936_005507" bus1="1006280936.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.LDV_BT_4527768_1_M1_IJAU05_1004527768_004988" bus1="1004527768.3.1.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.LDV_BT_1033088_2_M2_IJAU05_1001033088_001581" bus1="1001033088.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.LDV_BT_1071028_2_M1_IJAU05_1001071028_002917" bus1="1001071028.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_1032773_1_M2_IJAU05_1001032773_001500" bus1="1001032773.3.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_4527768_1_M2_IJAU05_1004527768_004989" bus1="1004527768.3.1.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_1075242_1_M1_IJAU05_1001075242_003369" bus1="1001075242.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_1042804_2_M1_IJAU05_1001042804_002482" bus1="1001042804.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_1033046_2_M1_IJAU05_1001033046_001568" bus1="1001033046.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+New "Load.TW_BT_1079463_M1_IJAU05_1001079463_003640" bus1="1001079463.2.3.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 

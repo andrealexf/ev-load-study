@@ -1,0 +1,123 @@
+clear
+Set DefaultBaseFrequency=60 
+
+New circuit.ITAJUBA basekv=13.8 pu=1.0399999618530273 bus1="100#" r1=0.0 x1=0.0001
+
+
+!----------IJAU05--- 175801810
+Redirect "CodCondutor_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU05_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU05_--MBS-1--T--.dss"
+
+!----------IJAU06--- 142432833
+Redirect "CodCondutor_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU06_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU06_--MBS-1--T--.dss"
+
+!----------IJAU07--- 121951400
+Redirect "CodCondutor_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU07_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU07_--MBS-1--T--.dss"
+
+!----------IJAU10--- 121957546
+Redirect "CodCondutor_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU10_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU10_--MBS-1--T--.dss"
+
+!----------IJAU11--- 121959632
+Redirect "CodCondutor_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU11_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU11_--MBS-1--T--.dss"
+
+!----------IJAU13--- 121961823
+Redirect "CodCondutor_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "ReguladorMT_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU13_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU13_--MBS-1--T--.dss"
+
+!----------IJAU14--- 152510499
+Redirect "CodCondutor_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "ReguladorMT_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU14_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU14_--MBS-1--T--.dss"
+
+!----------IJAU15--- 121970111
+Redirect "CodCondutor_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "TransformadorMTMTMTBT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "SegmentosMT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "ChavesMT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "SegmentosBT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "RamaisBT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "ReguladorMT_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "CurvaCarga_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "CargasBT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
+Redirect "CargasMT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
+
+!Redirect "Cargas_EV_Sim_00001_10001.dss"
+!Redirect "BusMarkers_EV_Sim_00001_10001.dss"
+
+Set mode = daily
+set stepsize = 1h
+set hour=19
+set number=1
+
+
+Set Voltagebases = [0.22 0.24 13.8]
+Calc Voltagebases
+Set tolerance = 0.0001
+Set maxcontroliter = 10
+!Set algorithm = newton
+!Solve mode = direct
+Solve
+
+buscoords buscoords05.csv
+buscoords buscoords06.csv
+buscoords buscoords07.csv
+buscoords buscoords10.csv
+buscoords buscoords11.csv
+buscoords buscoords13.csv
+buscoords buscoords14.csv
+buscoords buscoords15.csv
+

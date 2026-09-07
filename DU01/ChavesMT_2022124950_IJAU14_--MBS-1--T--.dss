@@ -1,0 +1,82 @@
+New "Line.CMT_854938" phases=3 bus1="155815943.1.2.3" bus2="163785244.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_890245" phases=3 bus1="163192184.1.2.3" bus2="163192193.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_967844" phases=3 bus1="182989931.1.2.3" bus2="182990842.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_967834" phases=3 bus1="182989116.1.2.3" bus2="182991836.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_882833" phases=1 bus1="159960128.3" bus2="168365647.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_934041" phases=3 bus1="175950535.1.2.3" bus2="175950873.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_388317" phases=3 bus1="152510736.1.2.3" bus2="152510752.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_882839" phases=3 bus1="159961234.1.2.3" bus2="159961239.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_922801" phases=3 bus1="173997915.1.2.3" bus2="173997928.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_860626" phases=3 bus1="152958890.1.2.3" bus2="162807093.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_967831" phases=3 bus1="182988434.1.2.3" bus2="182988438.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_868937" phases=3 bus1="155351061.1.2.3" bus2="182992453.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_854937" phases=3 bus1="152510651.1.2.3" bus2="160063675.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R35225" phases=3 bus1="152510812.1.2.3" bus2="170577036.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_967852" phases=3 bus1="182992456.1.2.3" bus2="182992459.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_185409" phases=3 bus1="152510741.1.2.3" bus2="175950302.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_173369" phases=3 bus1="152510555.1.2.3" bus2="152510801.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_185402" phases=3 bus1="152510732.1.2.3" bus2="175950528.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115906" phases=3 bus1="152510524.1.2.3" bus2="152510528.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158578" phases=3 bus1="152510525.1.2.3" bus2="152510531.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115787" phases=3 bus1="152510513.1.2.3" bus2="172172277.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_856370" phases=3 bus1="166740350.1.2.3" bus2="166740352.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158508" phases=3 bus1="152510632.1.2.3" bus2="161401128.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158515" phases=3 bus1="152510633.1.2.3" bus2="152510688.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115871" phases=1 bus1="152510712.1" bus2="152510715.1" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158529" phases=3 bus1="152510627.1.2.3" bus2="155341172.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_57869" phases=3 bus1="152510810.1.2.3" bus2="152510817.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158767" phases=3 bus1="152510580.1.2.3" bus2="166367902.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115850" phases=3 bus1="168206922.1.2.3" bus2="152510624.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R48245" phases=3 bus1="175504850.1.2.3" bus2="152510553.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158501" phases=3 bus1="152510626.1.2.3" bus2="152510628.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_73213" phases=3 bus1="152510546.1.2.3" bus2="152510819.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158746" phases=3 bus1="162851160.1.2.3" bus2="164456503.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_R50238" phases=3 bus1="162851159.1.2.3" bus2="162404708.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_928381" phases=3 bus1="174873490.1.2.3" bus2="177777211.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R55597" phases=3 bus1="170417996.1.2.3" bus2="160060310.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115780" phases=3 bus1="152510508.1.2.3" bus2="152510509.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115836" phases=3 bus1="152510587.1.2.3" bus2="177777236.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_858872" phases=3 bus1="152510635.1.2.3" bus2="170417995.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_153307" phases=3 bus1="152510545.1.2.3" bus2="175504845.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_166250" phases=3 bus1="181307127.1.2.3" bus2="2795940.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_115822" phases=3 bus1="152510573.1.2.3" bus2="152510574.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115794" phases=3 bus1="152510517.1.2.3" bus2="164665278.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_158774" phases=3 bus1="177777244.1.2.3" bus2="152510601.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_R39537" phases=3 bus1="166367905.1.2.3" bus2="168206919.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158571" phases=3 bus1="152510515.1.2.3" bus2="181307120.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R14559" phases=3 bus1="152510749.1.2.3" bus2="152510750.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158725" phases=3 bus1="152510511.1.2.3" bus2="152510512.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_74249" phases=3 bus1="152510507.1.2.3" bus2="2793581.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_158732" phases=3 bus1="152510542.1.2.3" bus2="152510543.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115773" phases=3 bus1="152510503.1.2.3" bus2="152510504.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_919120" phases=3 bus1="172989200.1.2.3" bus2="173798279.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_844573" phases=3 bus1="152510642.1.2.3" bus2="163455980.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_147966" phases=3 bus1="152510506.1.2.3" bus2="2548280.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+New "Line.CMT_115857" phases=3 bus1="152510630.1.2.3" bus2="152510698.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158760" phases=3 bus1="152510578.1.2.3" bus2="180191964.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_422981" phases=1 bus1="152510663.3" bus2="152510674.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R36514" phases=3 bus1="152510654.1.2.3" bus2="154195013.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_115829" phases=3 bus1="152510577.1.2.3" bus2="161054504.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_158522" phases=1 bus1="152510665.2" bus2="152510667.2" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_189819" phases=3 bus1="152510754.1.2.3" bus2="152510755.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_959533" phases=3 bus1="181192584.1.2.3" bus2="181192585.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_47488" phases=3 bus1="152510599.1.2.3" bus2="159962044.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_R31288" phases=3 bus1="152510804.1.2.3" bus2="181192721.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+New "Line.CMT_916424" phases=3 bus1="172172284.1.2.3" bus2="173497620.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+!New "Line.CMT_0173221-5A" phases=3 bus1="152510812.1.2.3" bus2="1705770360173221-5A.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+!New "Line.CMT_0173221-6A" phases=3 bus1="152510812.1.2.3" bus2="1705770360173221-6A.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+!New "Line.CMT_0336973-6A" phases=3 bus1="175504850.1.2.3" bus2="1525105530336973-6A.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+!New "Line.CMT_0227299-6A" phases=3 bus1="162851159.1.2.3" bus2="1624047080227299-6A.1.2.3" r1=0.001 r0=0.001 x1=0.0 x0=0.0 c1=0.0 c0=0.0  switch = T length=0.00100
+ !Chave MT em estado ABERTO!
+
+
+

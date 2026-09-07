@@ -1,0 +1,4 @@
+New "Transformer.REG_574A" phases=1 windings=2 buses=["121965659.3.4" "178679907.3.4"] conns=[Wye Wye ] kvs=[7.967 7.967] kvas=[750 750] xhl=0.7 %loadloss=0.0015586666666666668 %noloadloss=0.0005586666666666666
+New "Regcontrol.REG_574A" transformer="REG_574A" winding=2 vreg=104.17 band=2 ptratio=79.67433714816836 
+New "Reactor.TRF_574A_P" phases=1 bus1="121965659.4" R=15 X=0 basefreq=60 
+New "Reactor.TRF_574A_S" phases=1 bus1="178679907.4" R=15 X=0 basefreq=60

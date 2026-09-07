@@ -1,0 +1,12 @@
+New "Transformer.REG_6288A" phases=1 windings=2 buses=["152510570.1.4" "152510571.1.4"] conns=[Wye Wye ] kvs=[7.967 7.967] kvas=[750 750] xhl=0.7 %loadloss=0.0015586666666666668 %noloadloss=0.0005586666666666666
+New "Regcontrol.REG_6288A" transformer="REG_6288A" winding=2 vreg=104.17 band=2 ptratio=79.67433714816836 
+New "Reactor.TRF_6288A_P" phases=1 bus1="152510570.4" R=15 X=0 basefreq=60 
+New "Reactor.TRF_6288A_S" phases=1 bus1="152510571.4" R=15 X=0 basefreq=60
+New "Transformer.REG_6288B" phases=1 windings=2 buses=["152510570.3.4" "152510571.3.4"] conns=[Wye Wye ] kvs=[7.967 7.967] kvas=[750 750] xhl=0.7 %loadloss=0.0015586666666666668 %noloadloss=0.0005586666666666666
+New "Regcontrol.REG_6288B" transformer="REG_6288B" winding=2 vreg=104.17 band=2 ptratio=79.67433714816836 
+New "Reactor.TRF_6288B_P" phases=1 bus1="152510570.4" R=15 X=0 basefreq=60 
+New "Reactor.TRF_6288B_S" phases=1 bus1="152510571.4" R=15 X=0 basefreq=60
+New "Transformer.REG_6288C" phases=1 windings=2 buses=["152510570.2.4" "152510571.2.4"] conns=[Wye Wye ] kvs=[7.967 7.967] kvas=[750 750] xhl=0.7 %loadloss=0.0015586666666666668 %noloadloss=0.0005586666666666666
+New "Regcontrol.REG_6288C" transformer="REG_6288C" winding=2 vreg=104.17 band=2 ptratio=79.67433714816836 
+New "Reactor.TRF_6288C_P" phases=1 bus1="152510570.4" R=15 X=0 basefreq=60 
+New "Reactor.TRF_6288C_S" phases=1 bus1="152510571.4" R=15 X=0 basefreq=60

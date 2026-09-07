@@ -1,0 +1,420 @@
+New "Transformer.TRF_168035A" phases=1 windings=3 buses=["121958925.1" "744569.1.4" "744569.4.2" ] conns=[Wye Wye Wye] kvs=[7.9674337148168 0.12 0.12] taps=[1.0 1.0 1.0] kvas=[25 25 25] %loadloss=1.420000 %noloadloss=0.320000
+New "Reactor.TRF_168035A_R" phases=1 bus1="744569.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168070A" phases=3 windings=2 buses=["158585306.1.2.3" "744842.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_168070A_R" phases=1 bus1="744842.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168126A" phases=3 windings=2 buses=["183068060.1.2.3" "745836.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168126A_R" phases=1 bus1="745836.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_173152A" phases=3 windings=2 buses=["121959100.1.2.3" "817292.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_173152A_R" phases=1 bus1="817292.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1463222A" phases=3 windings=2 buses=["165191025.1.2.3" "164958645.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1463222A_R" phases=1 bus1="164958645.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_591969A" phases=3 windings=2 buses=["158585310.1.2.3" "2689078.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_591969A_R" phases=1 bus1="2689078.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168161A" phases=3 windings=2 buses=["148641199.1.2.3" "746354.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168161A_R" phases=1 bus1="746354.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168203A" phases=3 windings=2 buses=["182432465.1.2.3" "746893.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168203A_R" phases=1 bus1="746893.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168175A" phases=3 windings=2 buses=["169920073.1.2.3" "746550.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168175A_R" phases=1 bus1="746550.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1514639A" phases=3 windings=2 buses=["183068053.1.2.3" "175346677.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1514639A_R" phases=1 bus1="175346677.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168399A" phases=3 windings=2 buses=["171503493.1.2.3" "749049.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168399A_R" phases=1 bus1="749049.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168364A" phases=3 windings=2 buses=["148641203.1.2.3" "748671.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168364A_R" phases=1 bus1="748671.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168147A" phases=3 windings=2 buses=["158585309.1.2.3" "746095.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168147A_R" phases=1 bus1="746095.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167874A" phases=3 windings=2 buses=["121958932.1.2.3" "742469.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167874A_R" phases=1 bus1="742469.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168189A" phases=3 windings=2 buses=["155820468.1.2.3" "746662.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168189A_R" phases=1 bus1="746662.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1464953A" phases=3 windings=2 buses=["169921346.1.2.3" "169920060.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1464953A_R" phases=1 bus1="169920060.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168021A" phases=3 windings=2 buses=["183068055.1.2.3" "744415.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_168021A_R" phases=1 bus1="744415.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168238A" phases=3 windings=2 buses=["169921347.1.2.3" "747313.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_168238A_R" phases=1 bus1="747313.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168077A" phases=3 windings=2 buses=["158585308.1.2.3" "744961.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168077A_R" phases=1 bus1="744961.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_173264A" phases=3 windings=2 buses=["175933412.1.2.3" "817593.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_173264A_R" phases=1 bus1="817593.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168280A" phases=3 windings=2 buses=["165191023.1.2.3" "747880.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168280A_R" phases=1 bus1="747880.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168343A" phases=3 windings=2 buses=["148641200.1.2.3" "748419.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168343A_R" phases=1 bus1="748419.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168392A" phases=3 windings=2 buses=["175900757.1.2.3" "748951.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168392A_R" phases=1 bus1="748951.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168140A" phases=3 windings=2 buses=["182432464.1.2.3" "746032.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168140A_R" phases=1 bus1="746032.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167986A" phases=3 windings=2 buses=["121958911.1.2.3" "743946.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167986A_R" phases=1 bus1="743946.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168518A" phases=3 windings=2 buses=["171503497.1.2.3" "751044.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168518A_R" phases=1 bus1="751044.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168469A" phases=3 windings=2 buses=["175900756.1.2.3" "750197.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168469A_R" phases=1 bus1="750197.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168427A" phases=3 windings=2 buses=["175900760.1.2.3" "749504.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168427A_R" phases=1 bus1="749504.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168434A" phases=3 windings=2 buses=["175900759.1.2.3" "749616.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_168434A_R" phases=1 bus1="749616.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168315A" phases=3 windings=2 buses=["148641202.1.2.3" "748132.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_168315A_R" phases=1 bus1="748132.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168301A" phases=3 windings=2 buses=["182432468.1.2.3" "748062.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168301A_R" phases=1 bus1="748062.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1452335A" phases=3 windings=2 buses=["175900762.1.2.3" "164996922.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1452335A_R" phases=1 bus1="164996922.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168441A" phases=3 windings=2 buses=["171503495.1.2.3" "749721.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168441A_R" phases=1 bus1="749721.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_636391A" phases=3 windings=2 buses=["175656436.1.2.3" "2926000.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_636391A_R" phases=1 bus1="2926000.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_178829A" phases=3 windings=2 buses=["152597344.1.2.3" "835527.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_178829A_R" phases=1 bus1="835527.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166733A" phases=3 windings=2 buses=["121957672.1.2.3" "726502.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166733A_R" phases=1 bus1="726502.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166796A" phases=3 windings=2 buses=["121957665.1.2.3" "727468.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166796A_R" phases=1 bus1="727468.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166768A" phases=3 windings=2 buses=["121957602.1.2.3" "726929.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166768A_R" phases=1 bus1="726929.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166957A" phases=3 windings=2 buses=["121957686.1.2.3" "730051.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166957A_R" phases=1 bus1="730051.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166663A" phases=3 windings=2 buses=["121957651.1.2.3" "725641.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_166663A_R" phases=1 bus1="725641.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167125A" phases=3 windings=2 buses=["179753778.1.2.3" "732487.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167125A_R" phases=1 bus1="732487.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167188A" phases=3 windings=2 buses=["121957700.1.2.3" "733516.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167188A_R" phases=1 bus1="733516.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1400526A" phases=3 windings=2 buses=["160518120.1.2.3" "155407999.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1400526A_R" phases=1 bus1="155407999.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167398A" phases=3 windings=2 buses=["171463401.1.2.3" "736295.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167398A_R" phases=1 bus1="736295.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166971A" phases=3 windings=2 buses=["156913834.1.2.3" "730219.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166971A_R" phases=1 bus1="730219.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167097A" phases=3 windings=2 buses=["156913831.1.2.3" "732242.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167097A_R" phases=1 bus1="732242.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167055A" phases=3 windings=2 buses=["156913833.1.2.3" "731528.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167055A_R" phases=1 bus1="731528.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167314A" phases=3 windings=2 buses=["121957735.1.2.3" "735217.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167314A_R" phases=1 bus1="735217.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167216A" phases=3 windings=2 buses=["167799885.1.2.3" "733957.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167216A_R" phases=1 bus1="733957.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167069A" phases=3 windings=2 buses=["167486857.1.2.3" "731731.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167069A_R" phases=1 bus1="731731.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167167A" phases=3 windings=2 buses=["167486858.1.2.3" "733180.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_167167A_R" phases=1 bus1="733180.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167363A" phases=3 windings=2 buses=["121959604.1.2.3" "735903.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167363A_R" phases=1 bus1="735903.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167377A" phases=3 windings=2 buses=["155679699.1.2.3" "736043.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167377A_R" phases=1 bus1="736043.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167272A" phases=3 windings=2 buses=["121959597.1.2.3" "734811.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167272A_R" phases=1 bus1="734811.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167664A" phases=3 windings=2 buses=["171463409.1.2.3" "739893.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167664A_R" phases=1 bus1="739893.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167020A" phases=3 windings=2 buses=["121957693.1.2.3" "731143.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167020A_R" phases=1 bus1="731143.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167622A" phases=3 windings=2 buses=["171463407.1.2.3" "739053.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167622A_R" phases=1 bus1="739053.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167048A" phases=3 windings=2 buses=["179753784.1.2.3" "731479.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167048A_R" phases=1 bus1="731479.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167461A" phases=3 windings=2 buses=["167486862.1.2.3" "737037.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167461A_R" phases=1 bus1="737037.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167111A" phases=3 windings=2 buses=["167486853.1.2.3" "732347.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167111A_R" phases=1 bus1="732347.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167265A" phases=3 windings=2 buses=["179753787.1.2.3" "734776.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167265A_R" phases=1 bus1="734776.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166999A" phases=3 windings=2 buses=["167799887.1.2.3" "730786.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_166999A_R" phases=1 bus1="730786.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167650A" phases=3 windings=2 buses=["183312057.1.2.3" "739487.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167650A_R" phases=1 bus1="739487.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167804A" phases=3 windings=2 buses=["180626353.1.2.3" "741321.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_167804A_R" phases=1 bus1="741321.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167342A" phases=3 windings=2 buses=["170414238.1.2.3" "735609.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167342A_R" phases=1 bus1="735609.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167286A" phases=3 windings=2 buses=["121959422.1.2.3" "734909.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167286A_R" phases=1 bus1="734909.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167776A" phases=3 windings=2 buses=["180626354.1.2.3" "740943.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167776A_R" phases=1 bus1="740943.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1519164A" phases=3 windings=2 buses=["176406276.1.2.3" "176406277.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1519164A_R" phases=1 bus1="176406277.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167741A" phases=3 windings=2 buses=["183312065.1.2.3" "740712.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_167741A_R" phases=1 bus1="740712.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1422489A" phases=3 windings=2 buses=["170414237.1.2.3" "158550191.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1422489A_R" phases=1 bus1="158550191.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167615A" phases=3 windings=2 buses=["183312056.1.2.3" "738955.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167615A_R" phases=1 bus1="738955.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167384A" phases=3 windings=2 buses=["167486859.1.2.3" "736120.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167384A_R" phases=1 bus1="736120.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167811A" phases=3 windings=2 buses=["180626349.1.2.3" "741342.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167811A_R" phases=1 bus1="741342.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167412A" phases=3 windings=2 buses=["121959485.1.2.3" "736547.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167412A_R" phases=1 bus1="736547.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1540956A" phases=3 windings=2 buses=["180626351.1.2.3" "180626355.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[300 300] %loadloss=0.990000 %noloadloss=0.233333
+New "Reactor.TRF_1540956A_R" phases=1 bus1="180626355.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_166964A" phases=3 windings=2 buses=["170460697.1.2.3" "730121.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_166964A_R" phases=1 bus1="730121.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167034A" phases=3 windings=2 buses=["179753789.1.2.3" "731367.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167034A_R" phases=1 bus1="731367.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167713A" phases=3 windings=2 buses=["183312061.1.2.3" "740411.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167713A_R" phases=1 bus1="740411.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167587A" phases=3 windings=2 buses=["171463405.1.2.3" "738591.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167587A_R" phases=1 bus1="738591.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167538A" phases=3 windings=2 buses=["121959443.1.2.3" "737870.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167538A_R" phases=1 bus1="737870.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167237A" phases=3 windings=2 buses=["160518121.1.2.3" "734349.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167237A_R" phases=1 bus1="734349.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167692A" phases=3 windings=2 buses=["183312068.1.2.3" "740145.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_167692A_R" phases=1 bus1="740145.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167685A" phases=3 windings=2 buses=["183312069.1.2.3" "740110.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_167685A_R" phases=1 bus1="740110.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167797A" phases=3 windings=2 buses=["183312060.1.2.3" "741195.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_167797A_R" phases=1 bus1="741195.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1396597A" phases=3 windings=2 buses=["183312064.1.2.3" "153092684.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1396597A_R" phases=1 bus1="153092684.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167370A" phases=3 windings=2 buses=["160518122.1.2.3" "736015.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_167370A_R" phases=1 bus1="736015.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_213157A" phases=3 windings=2 buses=["179753782.1.2.3" "957103.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_213157A_R" phases=1 bus1="957103.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167657A" phases=3 windings=2 buses=["164402948.1.2.3" "739571.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[500 500] %loadloss=1.020000 %noloadloss=0.260000
+New "Reactor.TRF_167657A_R" phases=1 bus1="739571.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_217182A" phases=3 windings=2 buses=["171463404.1.2.3" "971376.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_217182A_R" phases=1 bus1="971376.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_214298A" phases=3 windings=2 buses=["121959415.1.2.3" "961352.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_214298A_R" phases=1 bus1="961352.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_218421A" phases=3 windings=2 buses=["121959429.1.2.3" "974785.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_218421A_R" phases=1 bus1="974785.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_219226A" phases=3 windings=2 buses=["171463340.1.2.3" "977172.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_219226A_R" phases=1 bus1="977172.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_206500A" phases=3 windings=2 buses=["156913836.1.2.3" "927983.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_206500A_R" phases=1 bus1="927983.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_220269A" phases=3 windings=2 buses=["169920066.1.2.3" "980560.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_220269A_R" phases=1 bus1="980560.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_209615A" phases=3 windings=2 buses=["170460696.1.2.3" "943971.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_209615A_R" phases=1 bus1="943971.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1501033A" phases=1 windings=3 buses=["175933403.3" "172211222.1.4" "172211222.4.2" ] conns=[Wye Wye Wye] kvs=[7.9674337148168 0.12 0.12] taps=[1.0 1.0 1.0] kvas=[10 10 10] %loadloss=1.800000 %noloadloss=0.450000
+New "Reactor.TRF_1501033A_R" phases=1 bus1="172211222.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_714791A" phases=3 windings=2 buses=["175933409.1.2.3" "3771229.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[30 30] %loadloss=1.666667 %noloadloss=0.433333
+New "Reactor.TRF_714791A_R" phases=1 bus1="3771229.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_750099A" phases=3 windings=2 buses=["175933405.1.2.3" "4574234.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[300 300] %loadloss=0.990000 %noloadloss=0.233333
+New "Reactor.TRF_750099A_R" phases=1 bus1="4574234.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_714784A" phases=3 windings=2 buses=["175933401.1.2.3" "3771215.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_714784A_R" phases=1 bus1="3771215.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1523604A" phases=3 windings=2 buses=["177277122.1.2.3" "177277123.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1523604A_R" phases=1 bus1="177277123.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1425117A" phases=3 windings=2 buses=["177277121.1.2.3" "156130217.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1425117A_R" phases=1 bus1="156130217.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_757435A" phases=3 windings=2 buses=["177277119.1.2.3" "4915358.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_757435A_R" phases=1 bus1="4915358.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1426301A" phases=3 windings=2 buses=["181712633.1.2.3" "156407107.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1426301A_R" phases=1 bus1="156407107.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1513545A" phases=3 windings=2 buses=["181712635.1.2.3" "175900772.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1513545A_R" phases=1 bus1="175900772.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_748202A" phases=3 windings=2 buses=["177277117.1.2.3" "4484662.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_748202A_R" phases=1 bus1="4484662.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1415659A" phases=3 windings=2 buses=["175933408.1.2.3" "154069641.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1415659A_R" phases=1 bus1="154069641.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1438398A" phases=3 windings=2 buses=["169219496.1.2.3" "158829838.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1438398A_R" phases=1 bus1="158829838.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1438399A" phases=3 windings=2 buses=["169219497.1.2.3" "158829844.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1438399A_R" phases=1 bus1="158829844.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1429172A" phases=3 windings=2 buses=["169891322.1.2.3" "157030234.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1429172A_R" phases=1 bus1="157030234.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1429176A" phases=3 windings=2 buses=["169891320.1.2.3" "157030729.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1429176A_R" phases=1 bus1="157030729.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1429178A" phases=3 windings=2 buses=["169891319.1.2.3" "157031190.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1429178A_R" phases=1 bus1="157031190.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1438416A" phases=3 windings=2 buses=["158832238.1.2.3" "158831654.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1438416A_R" phases=1 bus1="158831654.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1429182A" phases=3 windings=2 buses=["169891318.1.2.3" "157031428.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1429182A_R" phases=1 bus1="157031428.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1438419A" phases=3 windings=2 buses=["158832237.1.2.3" "158832167.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1438419A_R" phases=1 bus1="158832167.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1397312A" phases=3 windings=2 buses=["152597343.1.2.3" "152551826.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1397312A_R" phases=1 bus1="152551826.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1429174A" phases=3 windings=2 buses=["169891321.1.2.3" "157030383.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1429174A_R" phases=1 bus1="157030383.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1444318A" phases=3 windings=2 buses=["164404521.1.2.3" "160115926.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[500 500] %loadloss=1.020000 %noloadloss=0.260000
+New "Reactor.TRF_1444318A_R" phases=1 bus1="160115926.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1486127A" phases=3 windings=2 buses=["175933404.1.2.3" "169219936.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1486127A_R" phases=1 bus1="169219936.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1438401A" phases=3 windings=2 buses=["158830155.1.2.3" "158830157.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1438401A_R" phases=1 bus1="158830157.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1486122A" phases=3 windings=2 buses=["169219499.1.2.3" "169219500.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[15 15] %loadloss=1.966667 %noloadloss=0.500000
+New "Reactor.TRF_1486122A_R" phases=1 bus1="169219500.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1516877A" phases=3 windings=2 buses=["175933410.1.2.3" "175859788.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1516877A_R" phases=1 bus1="175859788.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496202A" phases=3 windings=2 buses=["180958496.1.2.3" "171249353.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1496202A_R" phases=1 bus1="171249353.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1481793A" phases=3 windings=2 buses=["171463341.1.2.3" "168455763.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1481793A_R" phases=1 bus1="168455763.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496212A" phases=3 windings=2 buses=["180958498.1.2.3" "171250470.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[300 300] %loadloss=0.990000 %noloadloss=0.233333
+New "Reactor.TRF_1496212A_R" phases=1 bus1="171250470.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496210A" phases=3 windings=2 buses=["180958501.1.2.3" "171250085.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1496210A_R" phases=1 bus1="171250085.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496214A" phases=3 windings=2 buses=["180958503.1.2.3" "171250657.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1496214A_R" phases=1 bus1="171250657.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168245A" phases=3 windings=2 buses=["121958547.1.2.3" "747439.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[100 100] %loadloss=1.370000 %noloadloss=0.335000
+New "Reactor.TRF_168245A_R" phases=1 bus1="747439.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167909A" phases=3 windings=2 buses=["121959226.1.2.3" "742910.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[225 225] %loadloss=1.060000 %noloadloss=0.248889
+New "Reactor.TRF_167909A_R" phases=1 bus1="742910.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_168231A" phases=3 windings=2 buses=["182432470.1.2.3" "747299.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_168231A_R" phases=1 bus1="747299.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_167524A" phases=3 windings=2 buses=["121959471.1.2.3" "737765.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[225 225] %loadloss=1.060000 %noloadloss=0.248889
+New "Reactor.TRF_167524A_R" phases=1 bus1="737765.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_719593A" phases=3 windings=2 buses=["161432201.1.2.3" "3819837.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_719593A_R" phases=1 bus1="3819837.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_745528A" phases=3 windings=2 buses=["150344139.1.2.3" "4337263.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[225 225] %loadloss=1.060000 %noloadloss=0.248889
+New "Reactor.TRF_745528A_R" phases=1 bus1="4337263.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_695821A" phases=3 windings=2 buses=["150344143.1.2.3" "3538255.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_695821A_R" phases=1 bus1="3538255.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1430969A" phases=3 windings=2 buses=["161431963.1.2.3" "157428597.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[225 225] %loadloss=1.060000 %noloadloss=0.248889
+New "Reactor.TRF_1430969A_R" phases=1 bus1="157428597.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496206A" phases=3 windings=2 buses=["180958500.1.2.3" "171249842.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1496206A_R" phases=1 bus1="171249842.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1423634A" phases=3 windings=2 buses=["155820467.1.2.3" "155820270.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1423634A_R" phases=1 bus1="155820270.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1425104A" phases=3 windings=2 buses=["167486856.1.2.3" "156128658.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[150 150] %loadloss=1.126667 %noloadloss=0.280000
+New "Reactor.TRF_1425104A_R" phases=1 bus1="156128658.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1496207A" phases=3 windings=2 buses=["180958502.1.2.3" "171249954.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[75 75] %loadloss=1.340000 %noloadloss=0.340000
+New "Reactor.TRF_1496207A_R" phases=1 bus1="171249954.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1549210A" phases=3 windings=2 buses=["181712636.1.2.3" "181712637.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[45 45] %loadloss=1.522222 %noloadloss=0.377778
+New "Reactor.TRF_1549210A_R" phases=1 bus1="181712637.4" R=15 X=0 basefreq=60
+
+New "Transformer.TRF_1526768A" phases=3 windings=2 buses=["183311863.1.2.3" "183311586.1.2.3.4"] conns=[Delta Wye] kvs=[13.8 0.22] taps=[1.0 1.0] kvas=[300 300] %loadloss=0.990000 %noloadloss=0.233333
+New "Reactor.TRF_1526768A_R" phases=1 bus1="183311586.4" R=15 X=0 basefreq=60
+

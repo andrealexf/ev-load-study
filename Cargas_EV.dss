@@ -1,3 +1,0 @@
-New "Load.LDV_BT_1011521_1_M1" bus1="1001011521.1.2.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=LDV
-New "Load.LDV_BT_1039374_M1" bus1="1001039374.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=LDV
-New "Load.TW_BT_3732288_M1" bus1="1003732288.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 daily="EV_1" ! tipo=TWO_WHEELER

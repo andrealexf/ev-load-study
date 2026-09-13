@@ -99,6 +99,7 @@ def gerar_cargas_ev_cenario(
     diretorio_resultados: Path,
     numero_simulacao: int = 1,
     seed_simulacao: int | None = None,
+    quantidade_trucks: int = 0,
 ) -> dict:
     if seed_simulacao is None:
         seed_simulacao = gerar_seed_simulacao(numero_simulacao=numero_simulacao)
@@ -111,6 +112,7 @@ def gerar_cargas_ev_cenario(
         diretorio_saida=diretorio_resultados,
         numero_simulacao=numero_simulacao,
         seed=seed_simulacao,
+        quantidade_trucks=quantidade_trucks,
     )
     arquivos_por_alimentador = resultado_sorteio["arquivos_por_alimentador"]
     arquivo_cargas_ev = consolidar_arquivos_cargas_ev(
@@ -126,6 +128,7 @@ def gerar_cargas_ev_cenario(
         "seed_simulacao": seed_simulacao,
         "quantidade_ldv": quantidade_ldv,
         "quantidade_two_wheelers": quantidade_two_wheelers,
+        "quantidade_trucks": quantidade_trucks,
         "arquivo_cargas_ev": arquivo_cargas_ev,
         "alimentadores_sorteados": alimentadores_sorteados,
         "total_alimentadores_sorteados": len(alimentadores_sorteados),
@@ -356,15 +359,17 @@ def coletar_resumo_simulacao(
         "modo_simulacao": cenario["modo_simulacao"],
         "simulacoes_por_horario": quantidade_simulacoes,
         "hora_simulacao": hora_simulacao,
-        "quantidade_ldv": cenario["quantidade_ldv"],
-        "quantidade_two_wheelers": cenario["quantidade_two_wheelers"],
-        "quantidade_total_ev": cenario["quantidade_ldv"] + cenario["quantidade_two_wheelers"],
-        "alimentadores_sorteados": ",".join(cenario["alimentadores_sorteados"]),
-        "total_alimentadores_sorteados": cenario["total_alimentadores_sorteados"],
+        "ldv": cenario["quantidade_ldv"],
+        "two_wheelers": cenario["quantidade_two_wheelers"],
+        "total_ev": cenario["quantidade_ldv"] + cenario["quantidade_two_wheelers"],
+        "alimentadores": ",".join(cenario["alimentadores_sorteados"]),
+        "total_alimentadores": cenario["total_alimentadores_sorteados"],
         "circuito": obter_nome_circuito(),
         "convergiu": bool(dss.Solution.Converged()),
         "quantidade_barras": int(dss.Circuit.NumBuses()),
         "quantidade_nos": obter_quantidade_nos(),
+        "tensao_maxima_pu": tensao_maxima,
+        "tensao_minima_pu": tensao_minima,
         "potencia_total_kw": potencia_total_kw,
         "potencia_total_kvar": potencia_total_kvar,
         "potencia_total_mw": potencia_total_mw,
@@ -374,13 +379,11 @@ def coletar_resumo_simulacao(
         "perdas_mw": perdas_mw,
         "perdas_mvar": perdas_mvar,
         "perdas_percentual": perdas_percentual,
-        "tensao_minima_pu": tensao_minima,
-        "tensao_maxima_pu": tensao_maxima,
         "iteracoes": iteracoes,
         "tempo_preparacao_segundos": cenario["tempo_preparacao_segundos"],
         "tempo_compilacao_segundos": tempo_compilacao_segundos,
         "tempo_solve_segundos": tempo_solve_segundos,
-        "arquivo_cargas_ev": str(cenario["arquivo_cargas_ev"]) if cenario["arquivo_cargas_ev"] is not None else "",
+        "diretorio_cargas_ev": str(cenario["arquivo_cargas_ev"]) if cenario["arquivo_cargas_ev"] is not None else "",
         "arquivos_extra_redirect": arquivos_extra_texto,
     }
 
@@ -388,21 +391,23 @@ def coletar_resumo_simulacao(
 def colunas_resultado() -> list[str]:
     return [
         "simulacao",
-        "total_execucoes",
-        "cenario",
-        "seed_simulacao",
-        "modo_simulacao",
-        "simulacoes_por_horario",
+        #"total_execucoes",
+        #"cenario",
+        #"seed_simulacao",
+        #"modo_simulacao",
+        #"simulacoes_por_horario",
         "hora_simulacao",
-        "quantidade_ldv",
-        "quantidade_two_wheelers",
-        "quantidade_total_ev",
-        "alimentadores_sorteados",
-        "total_alimentadores_sorteados",
+        "ldv",
+        "two_wheelers",
+        "total_ev",
+        "alimentadores",
+        "total_alimentadores",
         "circuito",
         "convergiu",
-        "quantidade_barras",
-        "quantidade_nos",
+        #"quantidade_barras",
+        #"quantidade_nos",
+        "tensao_maxima_pu",
+        "tensao_minima_pu",
         "potencia_total_kw",
         "potencia_total_kvar",
         "potencia_total_mw",
@@ -412,14 +417,12 @@ def colunas_resultado() -> list[str]:
         "perdas_mw",
         "perdas_mvar",
         "perdas_percentual",
-        "tensao_minima_pu",
-        "tensao_maxima_pu",
-        "iteracoes",
-        "tempo_preparacao_segundos",
-        "tempo_compilacao_segundos",
-        "tempo_solve_segundos",
-        "arquivo_cargas_ev",
-        "arquivos_extra_redirect",
+        #"iteracoes",
+        #"tempo_preparacao_segundos",
+        #"tempo_compilacao_segundos",
+        #"tempo_solve_segundos",
+        "diretorio_cargas_ev",
+        #"arquivos_extra_redirect",
     ]
 
 
@@ -445,7 +448,7 @@ def salvar_resumo_simulacoes(resultados: list[dict], diretorio_resultados: Path)
 
 
 def imprimir_summary_opendss(resultado: dict) -> None:
-    alimentadores = resultado["alimentadores_sorteados"] or "SEM EV"
+    alimentadores = resultado["alimentadores"] or "SEM EV"
     print("")
     print(
         f'SUMMARY OPENDSS - Hora {resultado["hora_simulacao"]:.0f}h - '
@@ -476,8 +479,8 @@ def imprimir_andamento(resultado: dict) -> None:
         f'Seed: {resultado["seed_simulacao"]} | '
         f'Modo: {resultado["modo_simulacao"]} | '
         f'Hora: {resultado["hora_simulacao"]:.0f}h | '
-        f'LDV: {resultado["quantidade_ldv"]} | '
-        f'TW: {resultado["quantidade_two_wheelers"]} | '
+        f'LDV: {resultado["ldv"]} | '
+        f'TW: {resultado["two_wheelers"]} | '
         f'Convergiu: {"SIM" if resultado["convergiu"] else "NÃO"} | '
         f'Tensão min: {resultado["tensao_minima_pu"]:.6f} pu | '
         f'Tensão max: {resultado["tensao_maxima_pu"]:.6f} pu'

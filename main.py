@@ -6,15 +6,16 @@ from odss_sim import executar_simulacoes_odss, gerar_cargas_ev_cenario
 
 
 quantidade_ldv = 30
-quantidade_two_wheelers = 30
+quantidade_two_wheelers = 15
+quantidade_trucks = 4
 quantidade_simulacoes = 1
 horas_simulacao = [19]
-numero_simulacao_geracao = 1
+numero_simulacao_geracao = 0
 seed_geracao = 10001
 
-extrair_bdgd = False
+extrair_bdgd = True
 gerar_cargas_ev = True
-gerar_busmarker = True
+gerar_busmarker = False
 simular = False
 
 arquivo_cargas_ev_existente = None
@@ -50,6 +51,7 @@ def main():
         cenario_ev = gerar_cargas_ev_cenario(
             quantidade_ldv=quantidade_ldv or 0,
             quantidade_two_wheelers=quantidade_two_wheelers or 0,
+            quantidade_trucks=quantidade_trucks or 0,
             diretorio_dss_base=diretorio_dss_base,
             diretorio_bdgd=diretorio_bdgd,
             diretorio_resultados=diretorio_resultados_manual,

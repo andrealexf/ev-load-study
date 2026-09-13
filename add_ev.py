@@ -93,11 +93,19 @@ def localizar_arquivo_cargas_bt(diretorio_dss_base: Path, alimentador: str) -> P
     return arquivos_unicos[0]
 
 
-def localizar_arquivo_ucbt(diretorio_bdgd: Path, alimentador: str) -> Path:
-    arquivo = Path(diretorio_bdgd) / f"Loads_UCBT_{alimentador}.txt"
-    if not arquivo.exists():
-        raise FileNotFoundError(f"Arquivo UCBT não encontrado:\n{arquivo}")
-    return arquivo
+def localizar_arquivo_ucbt(
+    diretorio_bdgd: Path,
+    alimentador: str,
+    classe_ucbt: str,
+) -> Path:
+    arquivo = Path(diretorio_bdgd) / f"Loads_UCBT_{classe_ucbt}_{alimentador}.txt"
+
+    if arquivo.exists():
+        return arquivo
+
+    raise FileNotFoundError(
+        f"Arquivo UCBT não encontrado:\n{arquivo}"
+    )
 
 
 def ler_ucbts_alimentador(arquivo_ucbt: Path, alimentador: str) -> list[dict]:
@@ -146,69 +154,164 @@ def ler_cargas_dss(arquivo_cargas: Path) -> dict:
     return dict(cargas)
 
 
-def carregar_pool_global(diretorio_dss_base: Path, diretorio_bdgd: Path) -> tuple[list[dict], list[dict]]:
+def carregar_pool_global(
+    diretorio_dss_base: Path,
+    diretorio_bdgd: Path,
+    classe_ucbt: str,
+) -> tuple[list[dict], list[dict]]:
     pool_valido = []
     pool_invalido = []
     indice_por_chave_global = defaultdict(int)
+
     for alimentador in ALIMENTADORES:
-        arquivo_ucbt = localizar_arquivo_ucbt(diretorio_bdgd, alimentador)
-        arquivo_cargas = localizar_arquivo_cargas_bt(diretorio_dss_base, alimentador)
-        ucbts = ler_ucbts_alimentador(arquivo_ucbt, alimentador)
-        cargas = ler_cargas_dss(arquivo_cargas)
+        arquivo_ucbt = localizar_arquivo_ucbt(
+            diretorio_bdgd=diretorio_bdgd,
+            alimentador=alimentador,
+            classe_ucbt=classe_ucbt,
+        )
+
+        arquivo_cargas = localizar_arquivo_cargas_bt(
+            diretorio_dss_base=diretorio_dss_base,
+            alimentador=alimentador,
+        )
+
+        ucbts = ler_ucbts_alimentador(
+            arquivo_ucbt=arquivo_ucbt,
+            alimentador=alimentador,
+        )
+
+        cargas = ler_cargas_dss(
+            arquivo_cargas=arquivo_cargas,
+        )
+
         for ucbt in ucbts:
-            chave = (ucbt["ramal"], ucbt["pac"])
-            linhas = cargas.get(chave, [])
+            chave = (
+                ucbt["ramal"],
+                ucbt["pac"],
+            )
+
+            linhas = cargas.get(
+                chave,
+                [],
+            )
+
             if not linhas:
-                pool_invalido.append(ucbt)
+                pool_invalido.append(
+                    ucbt
+                )
                 continue
-            chave_global = (alimentador, ucbt["ramal"], ucbt["pac"])
-            indice = indice_por_chave_global[chave_global]
-            linha_original = linhas[indice % len(linhas)]
-            indice_por_chave_global[chave_global] += 1
+
+            chave_global = (
+                classe_ucbt,
+                alimentador,
+                ucbt["ramal"],
+                ucbt["pac"],
+            )
+
+            indice = indice_por_chave_global[
+                chave_global
+            ]
+
+            linha_original = linhas[
+                indice % len(linhas)
+            ]
+
+            indice_por_chave_global[
+                chave_global
+            ] += 1
+
             ucbt_valida = ucbt.copy()
+            ucbt_valida["classe_ucbt"] = classe_ucbt
             ucbt_valida["linha_original"] = linha_original
             ucbt_valida["arquivo_cargas_bt"] = arquivo_cargas
-            pool_valido.append(ucbt_valida)
+
+            pool_valido.append(
+                ucbt_valida
+            )
+
     return pool_valido, pool_invalido
 
 
 def selecionar_ucbts_globalmente(
     pool_valido: list[dict],
-    quantidade_ldv: int,
-    quantidade_two_wheelers: int,
+    quantidade: int,
     seed: int,
-) -> tuple[list[dict], list[dict]]:
-    quantidade_total = quantidade_ldv + quantidade_two_wheelers
-    if quantidade_total <= 0:
-        raise ValueError("A quantidade total de EVs precisa ser maior que zero.")
-    if quantidade_total > len(pool_valido):
+) -> list[dict]:
+    if quantidade <= 0:
+        return []
+
+    if quantidade > len(pool_valido):
         raise ValueError(
-            f"Foram solicitados {quantidade_total} EVs, mas existem apenas "
+            f"Foram solicitadas {quantidade} cargas, mas existem apenas "
             f"{len(pool_valido)} UCBTs válidas no pool global."
         )
+
     sorteador = random.Random(seed)
-    selecionadas = sorteador.sample(pool_valido, quantidade_total)
-    return selecionadas[:quantidade_ldv], selecionadas[quantidade_ldv:]
+
+    return sorteador.sample(
+        pool_valido,
+        quantidade,
+    )
 
 
-def montar_linha_ev(ucbt: dict, tipo: str) -> str:
+def montar_linha_ev(
+    ucbt: dict,
+    tipo: str,
+) -> str:
     linha_original = ucbt["linha_original"]
-    nome_original = extrair_nome_carga(linha_original)
+
+    nome_original = extrair_nome_carga(
+        linha_original
+    )
+
     if not nome_original:
-        raise ValueError(f"Nome da carga não encontrado:\n{linha_original}")
-    bus1 = obter_parametro_linha(linha_original, "bus1")
-    conn = obter_parametro_linha(linha_original, "conn", "wye")
-    kv = obter_parametro_linha(linha_original, "kv")
+        raise ValueError(
+            f"Nome da carga não encontrado:\n{linha_original}"
+        )
+
+    bus1 = obter_parametro_linha(
+        linha_original,
+        "bus1",
+    )
+
+    conn = obter_parametro_linha(
+        linha_original,
+        "conn",
+        "wye",
+    )
+
+    kv = obter_parametro_linha(
+        linha_original,
+        "kv",
+    )
+
     phases = 3 if bus1.endswith(".1.2.3.4") else 1
+
     if tipo == "LDV":
         prefixo = "LDV"
         kw = 3.5
+
     elif tipo == "TW":
         prefixo = "TW"
         kw = 2.0
+
+    elif tipo == "TRUCK":
+        prefixo = "TRUCK"
+        kw = 22.0
+
     else:
-        raise ValueError(f"Tipo inválido: {tipo}")
-    nome_ev = f"{prefixo}_{nome_original}_{ucbt['ctmt']}_{ucbt['pac']}_{ucbt['id_ucbt']:06d}"
+        raise ValueError(
+            f"Tipo inválido: {tipo}"
+        )
+
+    nome_ev = (
+        f"{prefixo}_"
+        f"{nome_original}_"
+        f"{ucbt['ctmt']}_"
+        f"{ucbt['pac']}_"
+        f"{ucbt['id_ucbt']:06d}"
+    )
+
     return (
         f'New "Load.{nome_ev}" '
         f'bus1="{bus1}" '
@@ -221,32 +324,74 @@ def montar_linha_ev(ucbt: dict, tipo: str) -> str:
         f"status=variable "
         f"vmaxpu=1.5 "
         f"vminpu=0.92 "
+        f'daily="EV_1" '
+        f"! tipo={tipo} "
+        f"classe_ucbt={ucbt.get('classe_ucbt', '')} "
+        f"ctmt={ucbt['ctmt']} "
+        f"ramal={ucbt['ramal']} "
+        f"pac={ucbt['pac']}"
     )
 
 
 def gerar_arquivos_por_alimentador(
     ldvs: list[dict],
     tws: list[dict],
+    trucks: list[dict],
     diretorio_saida: Path,
     numero_simulacao: int,
     seed: int,
 ) -> dict[str, Path]:
     cargas_por_ctmt = defaultdict(list)
+
     for ucbt in ldvs:
-        cargas_por_ctmt[ucbt["ctmt"]].append(montar_linha_ev(ucbt, "LDV"))
+        cargas_por_ctmt[ucbt["ctmt"]].append(
+            montar_linha_ev(
+                ucbt,
+                "LDV",
+            )
+        )
+
     for ucbt in tws:
-        cargas_por_ctmt[ucbt["ctmt"]].append(montar_linha_ev(ucbt, "TW"))
+        cargas_por_ctmt[ucbt["ctmt"]].append(
+            montar_linha_ev(
+                ucbt,
+                "TW",
+            )
+        )
+
+    for ucbt in trucks:
+        cargas_por_ctmt[ucbt["ctmt"]].append(
+            montar_linha_ev(
+                ucbt,
+                "TRUCK",
+            )
+        )
+
     arquivos = {}
+
     for ctmt, linhas in cargas_por_ctmt.items():
         arquivo_saida = (
             Path(diretorio_saida)
             / f"Cargas_EV_{ctmt}_Sim_{numero_simulacao:05d}_{seed}.dss"
         )
-        arquivo_saida.parent.mkdir(parents=True, exist_ok=True)
-        with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
+
+        arquivo_saida.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        with open(
+            arquivo_saida,
+            "w",
+            encoding="utf-8",
+        ) as arquivo:
             for linha in linhas:
-                arquivo.write(linha + "\n")
+                arquivo.write(
+                    linha + "\n"
+                )
+
         arquivos[ctmt] = arquivo_saida
+
     return arquivos
 
 
@@ -258,29 +403,70 @@ def executar_add_ev(
     diretorio_saida: Path,
     numero_simulacao: int,
     seed: int,
+    quantidade_trucks: int = 0,
 ) -> dict:
-    pool_valido, pool_invalido = carregar_pool_global(
+    pool_residencial_valido, pool_residencial_invalido = carregar_pool_global(
         diretorio_dss_base=diretorio_dss_base,
         diretorio_bdgd=diretorio_bdgd,
+        classe_ucbt="RE",
     )
-    ldvs, tws = selecionar_ucbts_globalmente(
-        pool_valido=pool_valido,
-        quantidade_ldv=quantidade_ldv,
-        quantidade_two_wheelers=quantidade_two_wheelers,
+
+    pool_industrial_valido, pool_industrial_invalido = carregar_pool_global(
+        diretorio_dss_base=diretorio_dss_base,
+        diretorio_bdgd=diretorio_bdgd,
+        classe_ucbt="IN",
+    )
+
+    quantidade_residencial = (
+        quantidade_ldv
+        + quantidade_two_wheelers
+    )
+
+    selecionadas_residenciais = selecionar_ucbts_globalmente(
+        pool_valido=pool_residencial_valido,
+        quantidade=quantidade_residencial,
         seed=seed,
     )
+
+    ldvs = selecionadas_residenciais[
+        :quantidade_ldv
+    ]
+
+    tws = selecionadas_residenciais[
+        quantidade_ldv:
+    ]
+
+    trucks = selecionar_ucbts_globalmente(
+        pool_valido=pool_industrial_valido,
+        quantidade=quantidade_trucks,
+        seed=seed + 50000,
+    )
+
     arquivos = gerar_arquivos_por_alimentador(
         ldvs=ldvs,
         tws=tws,
+        trucks=trucks,
         diretorio_saida=diretorio_saida,
         numero_simulacao=numero_simulacao,
         seed=seed,
     )
+
     return {
         "seed": seed,
         "ldvs": ldvs,
         "tws": tws,
+        "trucks": trucks,
         "arquivos_por_alimentador": arquivos,
-        "total_pool_valido": len(pool_valido),
-        "total_pool_invalido": len(pool_invalido),
+        "total_pool_residencial_valido": len(pool_residencial_valido),
+        "total_pool_residencial_invalido": len(pool_residencial_invalido),
+        "total_pool_industrial_valido": len(pool_industrial_valido),
+        "total_pool_industrial_invalido": len(pool_industrial_invalido),
+        "total_pool_valido": (
+            len(pool_residencial_valido)
+            + len(pool_industrial_valido)
+        ),
+        "total_pool_invalido": (
+            len(pool_residencial_invalido)
+            + len(pool_industrial_invalido)
+        ),
     }

@@ -1,7 +1,10 @@
 clear
 Set DefaultBaseFrequency=60 
 
-New circuit.ITAJUBA basekv=13.8 pu=1.0399999618530273 bus1="100#" r1=0.0 x1=0.0001
+New circuit.ITAJUBA basekv=13.8 pu=1.0399999618530273 bus1="000#" r1=0.0 x1=0.0001
+
+New "Linecode.CABA08_3_3_3" nphases=3 basefreq=60 r1=0.2469 x1=0.4350 units=km normamps=592.80
+New "Line.SMT_000" phases=3 bus1="000#.1.2.3" bus2="100#.1.2.3" linecode="CABA08_3_3_3" length=0.01000 units=km
 
 
 !----------IJAU05--- 175801810
@@ -95,13 +98,17 @@ Redirect "CurvaCarga_2022124950_IJAU15_--MBS-1--T--.dss"
 Redirect "CargasBT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
 Redirect "CargasMT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
 
+Redirect "Cargas_EV_Buses.dss"
+
 !Redirect "Cargas_EV_Sim_00001_10001.dss"
 !Redirect "BusMarkers_EV_Sim_00001_10001.dss"
 
+New monitor.TOTALpower element=Line.SMT_000 terminal=1 mode=1 ppolar=no
+
 Set mode = daily
-set stepsize = 1h
-set hour=19
-set number=1
+!set stepsize = 1h
+set hour=18
+!set number=1
 
 
 Set Voltagebases = [0.22 0.24 13.8]
@@ -121,3 +128,4 @@ buscoords buscoords13.csv
 buscoords buscoords14.csv
 buscoords buscoords15.csv
 
+AddBusMarker Bus="509348B" code=15 color=Yellow size=4

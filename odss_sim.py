@@ -1,7 +1,6 @@
 from pathlib import Path
 from datetime import datetime
 import csv
-import shutil
 import time
 
 try:
@@ -24,18 +23,14 @@ limite_subtensao_pu = 0.92
 limite_sobretensao_pu = 1.05
 
 
-def criar_diretorio_resultados(
-    arquivo_dss: Path,
-) -> Path:
+def criar_diretorio_resultados(arquivo_dss: Path) -> Path:
     data_hora = datetime.now().strftime("%Y%m%d_%H%M%S")
     diretorio_resultados = arquivo_dss.parent / f"simulacoes_odssdirect_{data_hora}"
     diretorio_resultados.mkdir(parents=True, exist_ok=True)
     return diretorio_resultados
 
 
-def gerar_seed_simulacao(
-    numero_simulacao: int,
-) -> int:
+def gerar_seed_simulacao(numero_simulacao: int) -> int:
     return seed_base_simulacao + numero_simulacao
 
 
@@ -68,10 +63,7 @@ def obter_ultimo_erro_dss() -> str:
     return f"Erro {numero_erro}: {descricao}"
 
 
-def executar_comando_dss(
-    comando: str,
-    ignorar_erro: bool = False,
-) -> str:
+def executar_comando_dss(comando: str, ignorar_erro: bool = False) -> str:
     try:
         resultado = dss.Text.Command(comando)
     except Exception as exc:
@@ -109,7 +101,10 @@ def consolidar_arquivos_cargas_ev(
     numero_simulacao: int,
     seed_simulacao: int,
 ) -> Path:
-    arquivo_consolidado = diretorio_resultados / f"Cargas_EV_Sim_{numero_simulacao:05d}_{seed_simulacao}.dss"
+    arquivo_consolidado = (
+        diretorio_resultados
+        / f"Cargas_EV_Sim_{numero_simulacao:05d}_{seed_simulacao}.dss"
+    )
 
     with open(arquivo_consolidado, "w", encoding="utf-8") as saida:
         for alimentador in sorted(arquivos_por_alimentador.keys()):
@@ -172,8 +167,8 @@ def gerar_cargas_ev_cenario(
         seed_simulacao=seed_simulacao,
     )
 
-    tempo_fim = time.perf_counter()
     alimentadores_sorteados = sorted(arquivos_por_alimentador.keys())
+    tempo_preparacao = time.perf_counter() - tempo_inicio
 
     return {
         "numero_simulacao": numero_simulacao,
@@ -186,7 +181,7 @@ def gerar_cargas_ev_cenario(
         "total_alimentadores_sorteados": len(alimentadores_sorteados),
         "total_pool_valido": resultado_sorteio["total_pool_valido"],
         "total_pool_invalido": resultado_sorteio["total_pool_invalido"],
-        "tempo_preparacao_segundos": tempo_fim - tempo_inicio,
+        "tempo_preparacao_segundos": tempo_preparacao,
         "modo_simulacao": "COM_EV",
     }
 
@@ -234,9 +229,7 @@ def preparar_cenario_com_arquivo_ev(
     }
 
 
-def preparar_cenario_sem_ev(
-    numero_simulacao: int,
-) -> dict:
+def preparar_cenario_sem_ev(numero_simulacao: int) -> dict:
     return {
         "numero_simulacao": numero_simulacao,
         "seed_simulacao": gerar_seed_simulacao(numero_simulacao=numero_simulacao,),
@@ -283,10 +276,14 @@ def preparar_cenarios(
         return [preparar_cenario_sem_ev(numero_simulacao=1,)]
 
     if diretorio_dss_base is None:
-        raise ValueError("diretorio_dss_base é obrigatório quando houver simulação com EV.")
+        raise ValueError(
+            "diretorio_dss_base é obrigatório quando houver simulação com EV."
+        )
 
     if diretorio_bdgd is None:
-        raise ValueError("diretorio_bdgd é obrigatório quando houver simulação com EV.")
+        raise ValueError(
+            "diretorio_bdgd é obrigatório quando houver simulação com EV."
+        )
 
     quantidade_ldv = quantidade_ldv or 0
     quantidade_two_wheelers = quantidade_two_wheelers or 0
@@ -295,17 +292,17 @@ def preparar_cenarios(
     cenarios = []
 
     for numero_simulacao in range(1, quantidade_simulacoes + 1):
-        cenarios.append(
-            preparar_cenario_com_ev(
-                numero_simulacao=numero_simulacao,
-                quantidade_ldv=quantidade_ldv,
-                quantidade_two_wheelers=quantidade_two_wheelers,
-                quantidade_trucks=quantidade_trucks,
-                diretorio_dss_base=Path(diretorio_dss_base),
-                diretorio_bdgd=Path(diretorio_bdgd),
-                diretorio_resultados=diretorio_resultados,
-            )
+        cenario = preparar_cenario_com_ev(
+            numero_simulacao=numero_simulacao,
+            quantidade_ldv=quantidade_ldv,
+            quantidade_two_wheelers=quantidade_two_wheelers,
+            quantidade_trucks=quantidade_trucks,
+            diretorio_dss_base=Path(diretorio_dss_base),
+            diretorio_bdgd=Path(diretorio_bdgd),
+            diretorio_resultados=diretorio_resultados,
         )
+
+        cenarios.append(cenario)
 
     return cenarios
 
@@ -331,35 +328,39 @@ def compilar_circuito_simulacao(
     arquivo_master = Path(arquivo_master).resolve()
 
     if not arquivo_master.exists():
-        raise FileNotFoundError(f"Master OpenDSS não encontrado:\n{arquivo_master}")
+        raise FileNotFoundError(
+            f"Master OpenDSS não encontrado:\n"
+            f"{arquivo_master}"
+        )
 
     limpar_circuito()
-    executar_comando_dss(f'Compile "{arquivo_master}"')
+    executar_comando_dss(f'Compile "{arquivo_master.as_posix()}"')
 
     if int(dss.Circuit.NumBuses()) <= 0:
-        raise RuntimeError("O Master foi compilado, mas nenhum circuito foi carregado.")
+        raise RuntimeError(
+            "O Master foi compilado, mas nenhum circuito foi carregado."
+        )
 
     arquivos_redirect = []
 
     if arquivo_cargas_ev is not None:
-        arquivos_redirect.append(Path(arquivo_cargas_ev))
+        arquivos_redirect.append(Path(arquivo_cargas_ev).resolve())
 
-    arquivos_redirect.extend(normalizar_lista_redirects(arquivos_extra_redirect))
+    arquivos_redirect.extend(
+        Path(arquivo).resolve()
+        for arquivo in normalizar_lista_redirects(arquivos_extra_redirect)
+    )
+
+    arquivos_redirect = list(dict.fromkeys(arquivos_redirect))
 
     for arquivo_redirect in arquivos_redirect:
-        arquivo_redirect = arquivo_redirect.resolve()
-
         if not arquivo_redirect.exists():
             raise FileNotFoundError(
                 f"Arquivo DSS para Redirect não encontrado:\n"
                 f"{arquivo_redirect}"
             )
 
-        caminho_redirect = arquivo_redirect.as_posix()
-        executar_comando_dss(f'Redirect "{caminho_redirect}"')
-
-        caminho_master = arquivo_master.as_posix()
-        executar_comando_dss(f'Compile "{caminho_master}"')
+        executar_comando_dss(f'Redirect "{arquivo_redirect.as_posix()}"')
 
 
 def configurar_simulacao_temporal() -> None:
@@ -368,37 +369,7 @@ def configurar_simulacao_temporal() -> None:
     executar_comando_dss("Set Stepsize=1h")
 
 
-def configurar_verbose_opendss(
-    diretorio_resultados: Path,
-    cenario: dict,
-) -> tuple[Path, str]:
-    diretorio_verbose = diretorio_resultados / "verbose_opendss"
-    diretorio_verbose.mkdir(parents=True, exist_ok=True)
-
-    nome_caso = (
-        f"sim_{cenario['numero_simulacao']:05d}_"
-        f"{cenario['seed_simulacao']}"
-    )
-
-    executar_comando_dss(f'Set DataPath="{diretorio_verbose.resolve()}"')
-    executar_comando_dss(f"Set CaseName={nome_caso}")
-    executar_comando_dss(f"Set NormVminpu={limite_subtensao_pu}")
-    executar_comando_dss(f"Set NormVmaxpu={limite_sobretensao_pu}")
-    executar_comando_dss("Set OverloadReport=True")
-    #executar_comando_dss("Set VoltageExceptionReport=True")
-    executar_comando_dss("Set DIVerbose=True")
-    executar_comando_dss("Set DemandInterval=True")
-
-    return diretorio_verbose, nome_caso
-
-
-def fechar_verbose_opendss() -> None:
-    executar_comando_dss("CloseDI", ignorar_erro=True)
-
-
-def executar_solve(
-    hora_simulacao: float,
-) -> bool:
+def executar_solve(hora_simulacao: float) -> bool:
     executar_comando_dss(f"Set Hour={hora_simulacao}")
     dss.Solution.Solve()
     return bool(dss.Solution.Converged())
@@ -428,9 +399,7 @@ def obter_tensoes_validas(
     return tensoes_validas
 
 
-def coletar_verbose_tensao(
-    hora_simulacao: float,
-) -> dict:
+def coletar_verbose_tensao(hora_simulacao: float) -> dict:
     tensoes = obter_tensoes_validas()
 
     if not tensoes:
@@ -468,10 +437,13 @@ def salvar_verbose_simulacao(
     diretorio_resultados: Path,
     cenario: dict,
 ) -> Path:
-    arquivo_verbose = diretorio_resultados / (
-        f"Verbose_Sim_"
-        f"{cenario['numero_simulacao']:05d}_"
-        f"{cenario['seed_simulacao']}.csv"
+    arquivo_verbose = (
+        diretorio_resultados
+        / (
+            f"Verbose_Sim_"
+            f"{cenario['numero_simulacao']:05d}_"
+            f"{cenario['seed_simulacao']}.csv"
+        )
     )
 
     with open(arquivo_verbose, "w", encoding="utf-8-sig", newline="") as arquivo:
@@ -491,38 +463,6 @@ def salvar_verbose_simulacao(
         writer.writerows(registros)
 
     return arquivo_verbose
-
-
-def copiar_verbose_nativo(
-    diretorio_verbose: Path,
-    nome_caso: str,
-    diretorio_resultados: Path,
-    cenario: dict,
-) -> Path | None:
-    diretorio_caso = diretorio_verbose / nome_caso
-
-    if not diretorio_caso.exists():
-        return None
-
-    arquivo_origem = None
-
-    for arquivo in diretorio_caso.rglob("*"):
-        if arquivo.is_file() and arquivo.name.lower() == "di_voltexceptions.csv":
-            arquivo_origem = arquivo
-            break
-
-    if arquivo_origem is None:
-        return None
-
-    arquivo_destino = diretorio_resultados / (
-        f"Verbose_OpenDSS_Sim_"
-        f"{cenario['numero_simulacao']:05d}_"
-        f"{cenario['seed_simulacao']}.csv"
-    )
-
-    shutil.copy2(arquivo_origem, arquivo_destino)
-
-    return arquivo_destino
 
 
 def obter_quantidade_nos() -> int:
@@ -568,7 +508,6 @@ def coletar_resumo_simulacao(
     perdas_kvar = abs(float(perdas[1])) / 1000
 
     tensoes = obter_tensoes_validas()
-
     tensao_minima = min(tensoes) if tensoes else 0.0
     tensao_maxima = max(tensoes) if tensoes else 0.0
 
@@ -667,9 +606,9 @@ def colunas_resultado() -> list[str]:
         "perdas_mvar",
         "perdas_percentual",
         #"iteracoes",
-        #"tempo_preparacao_segundos",
-        #"tempo_compilacao_segundos",
-        #"tempo_solve_segundos",
+        "tempo_preparacao_segundos",
+        "tempo_compilacao_segundos",
+        "tempo_solve_segundos",
         "diretorio_cargas_ev",
         #"arquivos_extra_redirect",
     ]
@@ -708,9 +647,7 @@ def salvar_resumo_simulacoes(
     return arquivo_saida
 
 
-def imprimir_summary_opendss(
-    resultado: dict,
-) -> None:
+def imprimir_summary_opendss(resultado: dict) -> None:
     alimentadores = resultado["alimentadores"] or "SEM EV"
 
     print("")
@@ -736,9 +673,7 @@ def imprimir_summary_opendss(
     print("-" * 80)
 
 
-def imprimir_andamento(
-    resultado: dict,
-) -> None:
+def imprimir_andamento(resultado: dict) -> None:
     print(
         f'Simulação {resultado["simulacao"]:05d} | '
         f'Hora: {resultado["hora_simulacao"]:.0f}h | '
@@ -773,8 +708,19 @@ def executar_simulacoes_odss(
     if len(horas_simulacao) != 1:
         raise ValueError("Informe apenas um horário de simulação.")
 
+    try:
+        hora_simulacao = float(horas_simulacao[0])
+    except (TypeError, ValueError) as exc:
+        raise ValueError("O horário da simulação deve ser numérico.") from exc
+
+    if not 0 <= hora_simulacao < 24:
+        raise ValueError("O horário da simulação deve estar entre 0 e 23.")
+
     if not arquivo_dss.exists():
-        raise FileNotFoundError(f"Master geral OpenDSS não encontrado:\n{arquivo_dss}")
+        raise FileNotFoundError(
+            f"Master geral OpenDSS não encontrado:\n"
+            f"{arquivo_dss}"
+        )
 
     usar_ev_por_arquivo = arquivo_cargas_ev is not None
 
@@ -796,13 +742,19 @@ def executar_simulacoes_odss(
             raise ValueError("As quantidades não podem ser negativas.")
 
         if quantidade_ldv + quantidade_two_wheelers + quantidade_trucks <= 0:
-            raise ValueError("A quantidade total de EVs deve ser maior que zero.")
+            raise ValueError(
+                "A quantidade total de veículos deve ser maior que zero."
+            )
 
         if diretorio_dss_base is None:
-            raise ValueError("diretorio_dss_base é obrigatório para simulação com EV.")
+            raise ValueError(
+                "diretorio_dss_base é obrigatório para simulação com EV."
+            )
 
         if diretorio_bdgd is None:
-            raise ValueError("diretorio_bdgd é obrigatório para simulação com EV.")
+            raise ValueError(
+                "diretorio_bdgd é obrigatório para simulação com EV."
+            )
 
         diretorio_dss_base = Path(diretorio_dss_base)
         diretorio_bdgd = Path(diretorio_bdgd)
@@ -824,8 +776,15 @@ def executar_simulacoes_odss(
         quantidade_trucks = None
         quantidade_simulacoes = 1
 
+    if quantidade_simulacoes <= 0:
+        raise ValueError(
+            "A quantidade de simulações deve ser maior que zero."
+        )
+
     diretorio_resultados = criar_diretorio_resultados(arquivo_dss)
     arquivo_checkpoint = diretorio_resultados / "Checkpoint_Simulacoes_OpenDSSDirect.csv"
+
+    tempo_inicio_total = time.perf_counter()
 
     cenarios = preparar_cenarios(
         quantidade_simulacoes=quantidade_simulacoes,
@@ -838,13 +797,10 @@ def executar_simulacoes_odss(
         arquivo_cargas_ev=arquivo_cargas_ev,
     )
 
-    total_execucoes = len(cenarios) * len(horas_simulacao)
-
+    total_execucoes = len(cenarios)
     resultados = []
-    simulacao_global = 0
-    tempo_inicio_total = time.perf_counter()
 
-    for cenario in cenarios:
+    for indice_cenario, cenario in enumerate(cenarios, start=1):
         tempo_inicio_compilacao = time.perf_counter()
 
         compilar_circuito_simulacao(
@@ -854,64 +810,40 @@ def executar_simulacoes_odss(
         )
 
         configurar_simulacao_temporal()
+        tempo_compilacao = time.perf_counter() - tempo_inicio_compilacao
 
-        diretorio_verbose, nome_caso = configurar_verbose_opendss(
-            diretorio_resultados=diretorio_resultados,
+        tempo_inicio_solve = time.perf_counter()
+        executar_solve(hora_simulacao=hora_simulacao,)
+        tempo_solve = time.perf_counter() - tempo_inicio_solve
+
+        registro_verbose = coletar_verbose_tensao(hora_simulacao=hora_simulacao,)
+
+        resultado = coletar_resumo_simulacao(
+            simulacao_global=indice_cenario,
+            total_execucoes=total_execucoes,
             cenario=cenario,
+            quantidade_simulacoes=len(cenarios),
+            hora_simulacao=hora_simulacao,
+            tempo_compilacao_segundos=tempo_compilacao,
+            tempo_solve_segundos=tempo_solve,
+            arquivos_extra_redirect=arquivos_extra_redirect,
         )
 
-        tempo_compilacao = time.perf_counter() - tempo_inicio_compilacao
-        registros_verbose = []
+        resultados.append(resultado)
 
-        for hora_simulacao in horas_simulacao:
-            simulacao_global += 1
-            tempo_inicio_solve = time.perf_counter()
-
-            executar_solve(hora_simulacao=hora_simulacao,)
-
-            tempo_solve = time.perf_counter() - tempo_inicio_solve
-
-            registros_verbose.append(coletar_verbose_tensao(hora_simulacao=hora_simulacao,))
-
-            resultado = coletar_resumo_simulacao(
-                simulacao_global=simulacao_global,
-                total_execucoes=total_execucoes,
-                cenario=cenario,
-                quantidade_simulacoes=len(cenarios),
-                hora_simulacao=hora_simulacao,
-                tempo_compilacao_segundos=tempo_compilacao,
-                tempo_solve_segundos=tempo_solve,
-                arquivos_extra_redirect=arquivos_extra_redirect,
-            )
-
-            resultados.append(resultado)
-
-            salvar_checkpoint_resultado(
-                resultado=resultado,
-                arquivo_checkpoint=arquivo_checkpoint,
-            )
-
-            imprimir_andamento(resultado=resultado,)
-
-        fechar_verbose_opendss()
+        salvar_checkpoint_resultado(
+            resultado=resultado,
+            arquivo_checkpoint=arquivo_checkpoint,
+        )
 
         arquivo_verbose = salvar_verbose_simulacao(
-            registros=registros_verbose,
+            registros=[registro_verbose],
             diretorio_resultados=diretorio_resultados,
             cenario=cenario,
         )
 
-        arquivo_verbose_nativo = copiar_verbose_nativo(
-            diretorio_verbose=diretorio_verbose,
-            nome_caso=nome_caso,
-            diretorio_resultados=diretorio_resultados,
-            cenario=cenario,
-        )
-
+        imprimir_andamento(resultado=resultado,)
         print(f"Verbose: {arquivo_verbose}")
-
-        if arquivo_verbose_nativo is not None:
-            print(f"Verbose OpenDSS: {arquivo_verbose_nativo}")
 
     arquivo_resumo = salvar_resumo_simulacoes(
         resultados=resultados,
@@ -924,7 +856,7 @@ def executar_simulacoes_odss(
     print("=" * 80)
     print("SIMULAÇÕES FINALIZADAS")
     print("=" * 80)
-    print(f"Horário simulado: {horas_simulacao[0]}h")
+    print(f"Horário simulado: {hora_simulacao:g}h")
     print(f"Total de cenários: {len(cenarios)}")
     print(f"Total de execuções: {len(resultados)}")
     print(f"Tempo total: {tempo_total:.2f} segundos")

@@ -9,7 +9,7 @@ quantidade_ldv = 30
 quantidade_two_wheelers = 15
 quantidade_trucks = 4
 quantidade_simulacoes = 5
-horas_simulacao = [19]
+horas_simulacao = [18]
 numero_simulacao_geracao = 1
 seed_geracao = 10001
 

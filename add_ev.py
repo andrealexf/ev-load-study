@@ -16,6 +16,9 @@ ALIMENTADORES = [
     "IJAU15",
 ]
 
+cache_cargas_dss = {}
+cache_ucbts = {}
+cache_pool_global = {}
 
 def normalizar_codigo(valor) -> str:
     if valor is None:
@@ -153,12 +156,46 @@ def ler_cargas_dss(arquivo_cargas: Path) -> dict:
             cargas[(ramal, pac)].append(linha.strip())
     return dict(cargas)
 
+def obter_cargas_dss_cache(arquivo_cargas: Path) -> dict:
+    chave = str(Path(arquivo_cargas).resolve())
+
+    if chave not in cache_cargas_dss:
+        cache_cargas_dss[chave] = ler_cargas_dss(arquivo_cargas=arquivo_cargas,)
+
+    return cache_cargas_dss[chave]
+
+
+def obter_ucbts_cache(
+    arquivo_ucbt: Path,
+    alimentador: str,
+) -> list[dict]:
+    chave = (
+        str(Path(arquivo_ucbt).resolve()),
+        alimentador,
+    )
+
+    if chave not in cache_ucbts:
+        cache_ucbts[chave] = ler_ucbts_alimentador(
+            arquivo_ucbt=arquivo_ucbt,
+            alimentador=alimentador,
+        )
+
+    return cache_ucbts[chave]
 
 def carregar_pool_global(
     diretorio_dss_base: Path,
     diretorio_bdgd: Path,
     classe_ucbt: str,
 ) -> tuple[list[dict], list[dict]]:
+    chave_pool = (
+        str(Path(diretorio_dss_base).resolve()),
+        str(Path(diretorio_bdgd).resolve()),
+        classe_ucbt,
+    )
+
+    if chave_pool in cache_pool_global:
+        return cache_pool_global[chave_pool]
+
     pool_valido = []
     pool_invalido = []
     indice_por_chave_global = defaultdict(int)
@@ -175,14 +212,12 @@ def carregar_pool_global(
             alimentador=alimentador,
         )
 
-        ucbts = ler_ucbts_alimentador(
+        ucbts = obter_ucbts_cache(
             arquivo_ucbt=arquivo_ucbt,
             alimentador=alimentador,
         )
 
-        cargas = ler_cargas_dss(
-            arquivo_cargas=arquivo_cargas,
-        )
+        cargas = obter_cargas_dss_cache(arquivo_cargas=arquivo_cargas,)
 
         for ucbt in ucbts:
             chave = (
@@ -190,15 +225,10 @@ def carregar_pool_global(
                 ucbt["pac"],
             )
 
-            linhas = cargas.get(
-                chave,
-                [],
-            )
+            linhas = cargas.get(chave, [])
 
             if not linhas:
-                pool_invalido.append(
-                    ucbt
-                )
+                pool_invalido.append(ucbt)
                 continue
 
             chave_global = (
@@ -208,28 +238,23 @@ def carregar_pool_global(
                 ucbt["pac"],
             )
 
-            indice = indice_por_chave_global[
-                chave_global
-            ]
-
-            linha_original = linhas[
-                indice % len(linhas)
-            ]
-
-            indice_por_chave_global[
-                chave_global
-            ] += 1
+            indice = indice_por_chave_global[chave_global]
+            linha_original = linhas[indice % len(linhas)]
+            indice_por_chave_global[chave_global] += 1
 
             ucbt_valida = ucbt.copy()
             ucbt_valida["classe_ucbt"] = classe_ucbt
             ucbt_valida["linha_original"] = linha_original
             ucbt_valida["arquivo_cargas_bt"] = arquivo_cargas
 
-            pool_valido.append(
-                ucbt_valida
-            )
+            pool_valido.append(ucbt_valida)
 
-    return pool_valido, pool_invalido
+    cache_pool_global[chave_pool] = (
+        pool_valido,
+        pool_invalido,
+    )
+
+    return cache_pool_global[chave_pool]
 
 
 def selecionar_ucbts_globalmente(

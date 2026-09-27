@@ -1,0 +1,2 @@
+New "Load.TW_BT_1249402_1_M2_IJAU14_1001249402_000658" bus1="1001249402.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=TW classe_ucbt=RE ctmt=IJAU14 ramal=1249402 pac=1001249402
+New "Load.TW_BT_1244138_3_M1_IJAU14_1001244138_000579" bus1="1001244138.2.3.4" phases=1 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=TW classe_ucbt=RE ctmt=IJAU14 ramal=1244138 pac=1001244138

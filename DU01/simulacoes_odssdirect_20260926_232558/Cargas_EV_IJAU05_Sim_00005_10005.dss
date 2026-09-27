@@ -1,0 +1,3 @@
+New "Load.LDV_BT_1072610_1_M2_IJAU05_1001072610_003155" bus1="1001072610.3.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=LDV classe_ucbt=RE ctmt=IJAU05 ramal=1072610 pac=1001072610
+New "Load.LDV_BT_4202576_1_M2_IJAU05_1004202576_004713" bus1="1004202576.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=LDV classe_ucbt=RE ctmt=IJAU05 ramal=4202576 pac=1004202576
+New "Load.LDV_BT_4139758_M1_IJAU05_1004139758_004667" bus1="1004139758.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=LDV classe_ucbt=RE ctmt=IJAU05 ramal=4139758 pac=1004139758

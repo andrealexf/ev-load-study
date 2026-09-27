@@ -1,0 +1,2 @@
+New "Load.LDV_BT_1234268_M1_IJAU15_1001234268_004440" bus1="1001234268.1.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=LDV classe_ucbt=RE ctmt=IJAU15 ramal=1234268 pac=1001234268
+New "Load.TW_BT_968758_M2_IJAU15_1000968758_006865" bus1="1000968758.2.4" phases=1 conn=Wye model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=TW classe_ucbt=RE ctmt=IJAU15 ramal=968758 pac=1000968758

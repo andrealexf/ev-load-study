@@ -8,15 +8,15 @@ from odss_sim import executar_simulacoes_odss, gerar_cargas_ev_cenario
 quantidade_ldv = 30
 quantidade_two_wheelers = 15
 quantidade_trucks = 4
-quantidade_simulacoes = 1
+quantidade_simulacoes = 5
 horas_simulacao = [19]
-numero_simulacao_geracao = 0
+numero_simulacao_geracao = 1
 seed_geracao = 10001
 
-extrair_bdgd = True
+extrair_bdgd = False #nao deixar true
 gerar_cargas_ev = True
 gerar_busmarker = False
-simular = False
+simular = True
 
 arquivo_cargas_ev_existente = None
 arquivo_pv = None
@@ -68,16 +68,14 @@ def main():
         )
 
     if arquivo_pv is not None:
-        arquivos_extra_redirect.append(
-            Path(arquivo_pv)
-        )
+        arquivos_extra_redirect.append(Path(arquivo_pv))
 
     if simular:
         executar_simulacoes_odss(
             arquivo_dss=arquivo_master_dss,
             diretorio_dss_base=diretorio_dss_base,
             diretorio_bdgd=diretorio_bdgd,
-            arquivo_cargas_ev=arquivo_cargas_ev,
+            #arquivo_cargas_ev=arquivo_cargas_ev,
             arquivos_extra_redirect=arquivos_extra_redirect,
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,

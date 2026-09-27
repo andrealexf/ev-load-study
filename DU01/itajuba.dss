@@ -1,4 +1,5 @@
 clear
+set datapath = "C:\Users\Andre\Documents\ev\DU01"
 Set DefaultBaseFrequency=60 
 
 New circuit.ITAJUBA basekv=13.8 pu=1.0399999618530273 bus1="000#" r1=0.0 x1=0.0001
@@ -98,26 +99,37 @@ Redirect "CurvaCarga_2022124950_IJAU15_--MBS-1--T--.dss"
 Redirect "CargasBT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
 Redirect "CargasMT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
 
-Redirect "Cargas_EV_Buses.dss"
 
-!Redirect "Cargas_EV_Sim_00001_10001.dss"
-!Redirect "BusMarkers_EV_Sim_00001_10001.dss"
+
+!set datapath = "C:\Users\Andre\Documents\ev\DU01\arquivos_gerados"
+
+!Redirect "Cargas_EV_Sim_00000_10001"
+!Redirect "BusMarkers_EV_Sim_00000_10001"
+
+!set datapath = "C:\Users\Andre\Documents\ev\DU01"
+
 
 New monitor.TOTALpower element=Line.SMT_000 terminal=1 mode=1 ppolar=no
+New EnergyMeter.M1 element=Line.SMT_000 Terminal=1
 
-Set mode = daily
-!set stepsize = 1h
-set hour=18
-!set number=1
+Set mode=Daily
+Set stepsize=1h
+Set hour=18
+Set number=4
 
+Set VoltageBases=[0.22 0.24 13.8]
+CalcVoltageBases
 
-Set Voltagebases = [0.22 0.24 13.8]
-Calc Voltagebases
-Set tolerance = 0.0001
-Set maxcontroliter = 10
-!Set algorithm = newton
-!Solve mode = direct
-Solve
+Set tolerance=0.0001
+Set maxcontroliter=10
+
+Set NormVminpu=0.92
+Set NormVmaxpu=1.05
+
+Set DemandInterval=Yes
+Set DIVerbose=Yes
+Set OverloadReport=Yes
+Set VoltExceptionReport=Yes
 
 buscoords buscoords05.csv
 buscoords buscoords06.csv
@@ -127,5 +139,3 @@ buscoords buscoords11.csv
 buscoords buscoords13.csv
 buscoords buscoords14.csv
 buscoords buscoords15.csv
-
-AddBusMarker Bus="509348B" code=15 color=Yellow size=4

@@ -324,7 +324,7 @@ def montar_linha_ev(
         f"status=variable "
         f"vmaxpu=1.5 "
         f"vminpu=0.92 "
-        f'daily="EV_1" '
+        #f'daily="EV_1" '
         f"! tipo={tipo} "
         f"classe_ucbt={ucbt.get('classe_ucbt', '')} "
         f"ctmt={ucbt['ctmt']} "

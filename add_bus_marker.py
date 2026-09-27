@@ -57,11 +57,26 @@ def identificar_cor_busmarker(
     if "LOAD.LDV_" in linha_upper:
         return "Red"
 
+    if "TIPO=LDV" in linha_upper:
+        return "Red"
+
     if '"LOAD.TW_' in linha_upper:
         return "Green"
 
     if "LOAD.TW_" in linha_upper:
         return "Green"
+
+    if "TIPO=TW" in linha_upper:
+        return "Green"
+
+    if '"LOAD.TRUCK_' in linha_upper:
+        return "Fuchsia"
+
+    if "LOAD.TRUCK_" in linha_upper:
+        return "Fuchsia"
+
+    if "TIPO=TRUCK" in linha_upper:
+        return "Fuchsia"
 
     return None
 

@@ -1,2 +1,0 @@
-New "Load.LDV_BT_1065652_1_M2_IJAU10_1001065652_003395" bus1="1001065652.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=3.5 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=LDV classe_ucbt=RE ctmt=IJAU10 ramal=1065652 pac=1001065652
-New "Load.TW_BT_4889353_9_M2_IJAU10_1004889353_004868" bus1="1004889353.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=2.0 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 ! tipo=TW classe_ucbt=RE ctmt=IJAU10 ramal=4889353 pac=1004889353

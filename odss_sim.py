@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 import csv
+import re
 import time
 
 try:
@@ -91,9 +92,9 @@ def executar_comando_dss(comando: str, ignorar_erro: bool = False) -> str:
     return str(resultado).strip()
 
 
+
 def limpar_circuito() -> None:
     executar_comando_dss("Clear")
-
 
 def consolidar_arquivos_cargas_ev(
     arquivos_por_alimentador: dict,
@@ -108,13 +109,7 @@ def consolidar_arquivos_cargas_ev(
 
     with open(arquivo_consolidado, "w", encoding="utf-8") as saida:
         for alimentador in sorted(arquivos_por_alimentador.keys()):
-            arquivo_origem = Path(arquivos_por_alimentador[alimentador])
-
-            if not arquivo_origem.exists():
-                raise FileNotFoundError(
-                    f"Arquivo EV não encontrado para {alimentador}:\n"
-                    f"{arquivo_origem}"
-                )
+            linhas = arquivos_por_alimentador[alimentador]
 
             saida.write(
                 f"\n! ========================================\n"
@@ -122,15 +117,54 @@ def consolidar_arquivos_cargas_ev(
                 f"! ========================================\n"
             )
 
-            with open(arquivo_origem, "r", encoding="utf-8") as origem:
-                conteudo = origem.read()
-                saida.write(conteudo)
-
-                if conteudo and not conteudo.endswith("\n"):
-                    saida.write("\n")
+            for linha in linhas:
+                saida.write(linha + "\n")
 
     return arquivo_consolidado
 
+
+def extrair_configuracoes_cargas_arquivo(arquivo_cargas_ev: Path) -> list[dict]:
+    configuracoes = []
+    nomes_vistos = set()
+    padrao_nome = re.compile(r'^\s*New\s+"?(Load\.[^"\s]+)"?', flags=re.IGNORECASE)
+    padrao_kw = re.compile(r'(?:^|\s)kw=([+-]?[0-9]+(?:\.[0-9]+)?)', flags=re.IGNORECASE)
+    padrao_kw_ativo = re.compile(r'(?:^|\s)kw_ativo=([+-]?[0-9]+(?:\.[0-9]+)?)', flags=re.IGNORECASE)
+
+    with open(arquivo_cargas_ev, "r", encoding="utf-8", errors="ignore") as arquivo:
+        for linha in arquivo:
+            match_nome = padrao_nome.search(linha)
+
+            if not match_nome:
+                continue
+
+            nome = match_nome.group(1)
+            chave = nome.lower()
+
+            if chave in nomes_vistos:
+                continue
+
+            match_kw_ativo = padrao_kw_ativo.search(linha)
+            match_kw = padrao_kw.search(linha)
+
+            if match_kw_ativo:
+                kw_ativo = float(match_kw_ativo.group(1))
+            elif match_kw:
+                kw_ativo = float(match_kw.group(1))
+            else:
+                raise ValueError(
+                    f"Potência kW não encontrada para a carga {nome} em:\n"
+                    f"{arquivo_cargas_ev}"
+                )
+
+            nomes_vistos.add(chave)
+            configuracoes.append(
+                {
+                    "nome": nome,
+                    "kw_ativo": kw_ativo,
+                }
+            )
+
+    return configuracoes
 
 def gerar_cargas_ev_cenario(
     quantidade_ldv: int,
@@ -177,6 +211,8 @@ def gerar_cargas_ev_cenario(
         "quantidade_two_wheelers": quantidade_two_wheelers,
         "quantidade_trucks": quantidade_trucks,
         "arquivo_cargas_ev": arquivo_cargas_ev,
+        "nomes_cargas": resultado_sorteio["nomes_cargas"],
+        "configuracoes_cargas": resultado_sorteio["configuracoes_cargas"],
         "alimentadores_sorteados": alimentadores_sorteados,
         "total_alimentadores_sorteados": len(alimentadores_sorteados),
         "total_pool_valido": resultado_sorteio["total_pool_valido"],
@@ -213,13 +249,21 @@ def preparar_cenario_com_arquivo_ev(
     quantidade_two_wheelers: int | None,
     quantidade_trucks: int | None,
 ) -> dict:
+    arquivo_cargas_ev = Path(arquivo_cargas_ev)
+
+    configuracoes_cargas = extrair_configuracoes_cargas_arquivo(
+        arquivo_cargas_ev=arquivo_cargas_ev,
+    )
+
     return {
         "numero_simulacao": 1,
         "seed_simulacao": 0,
         "quantidade_ldv": quantidade_ldv or 0,
         "quantidade_two_wheelers": quantidade_two_wheelers or 0,
         "quantidade_trucks": quantidade_trucks or 0,
-        "arquivo_cargas_ev": Path(arquivo_cargas_ev),
+        "arquivo_cargas_ev": arquivo_cargas_ev,
+        "configuracoes_cargas": configuracoes_cargas,
+        "nomes_cargas": [item["nome"] for item in configuracoes_cargas],
         "alimentadores_sorteados": [],
         "total_alimentadores_sorteados": 0,
         "total_pool_valido": 0,
@@ -237,6 +281,8 @@ def preparar_cenario_sem_ev(numero_simulacao: int) -> dict:
         "quantidade_two_wheelers": 0,
         "quantidade_trucks": 0,
         "arquivo_cargas_ev": None,
+        "nomes_cargas": [],
+        "configuracoes_cargas": [],
         "alimentadores_sorteados": [],
         "total_alimentadores_sorteados": 0,
         "total_pool_valido": 0,
@@ -292,17 +338,17 @@ def preparar_cenarios(
     cenarios = []
 
     for numero_simulacao in range(1, quantidade_simulacoes + 1):
-        cenario = preparar_cenario_com_ev(
-            numero_simulacao=numero_simulacao,
-            quantidade_ldv=quantidade_ldv,
-            quantidade_two_wheelers=quantidade_two_wheelers,
-            quantidade_trucks=quantidade_trucks,
-            diretorio_dss_base=Path(diretorio_dss_base),
-            diretorio_bdgd=Path(diretorio_bdgd),
-            diretorio_resultados=diretorio_resultados,
+        cenarios.append(
+            preparar_cenario_com_ev(
+                numero_simulacao=numero_simulacao,
+                quantidade_ldv=quantidade_ldv,
+                quantidade_two_wheelers=quantidade_two_wheelers,
+                quantidade_trucks=quantidade_trucks,
+                diretorio_dss_base=Path(diretorio_dss_base),
+                diretorio_bdgd=Path(diretorio_bdgd),
+                diretorio_resultados=diretorio_resultados,
+            )
         )
-
-        cenarios.append(cenario)
 
     return cenarios
 
@@ -320,9 +366,50 @@ def normalizar_lista_redirects(
     ]
 
 
-def compilar_circuito_simulacao(
+def obter_todas_configuracoes_cargas(cenarios: list[dict]) -> list[dict]:
+    configuracoes = []
+    nomes_vistos = set()
+
+    for cenario in cenarios:
+        for configuracao in cenario["configuracoes_cargas"]:
+            nome = configuracao["nome"]
+            chave = nome.lower()
+
+            if chave in nomes_vistos:
+                continue
+
+            nomes_vistos.add(chave)
+            configuracoes.append(configuracao)
+
+    return configuracoes
+
+
+def inicializar_cargas(configuracoes_cargas: list[dict]) -> None:
+    for configuracao in configuracoes_cargas:
+        executar_comando_dss(
+            f"Edit {configuracao['nome']} enabled=yes kW=0"
+        )
+
+
+def editar_potencia_carga(nome_carga: str, kw: float) -> None:
+    executar_comando_dss(f"Edit {nome_carga} kW={kw:.12g}")
+
+
+def zerar_cargas(configuracoes_cargas: list[dict]) -> None:
+    for configuracao in configuracoes_cargas:
+        editar_potencia_carga(nome_carga=configuracao["nome"], kw=0.0,)
+
+
+def aplicar_cargas_cenario(configuracoes_cargas: list[dict]) -> None:
+    for configuracao in configuracoes_cargas:
+        editar_potencia_carga(
+            nome_carga=configuracao["nome"],
+            kw=float(configuracao["kw_ativo"]),
+        )
+
+def compilar_circuito_unico(
     arquivo_master: Path,
-    arquivo_cargas_ev: Path | None = None,
+    cenarios: list[dict],
     arquivos_extra_redirect: list[Path] | None = None,
 ) -> None:
     arquivo_master = Path(arquivo_master).resolve()
@@ -343,8 +430,11 @@ def compilar_circuito_simulacao(
 
     arquivos_redirect = []
 
-    if arquivo_cargas_ev is not None:
-        arquivos_redirect.append(Path(arquivo_cargas_ev).resolve())
+    for cenario in cenarios:
+        arquivo_cargas_ev = cenario["arquivo_cargas_ev"]
+
+        if arquivo_cargas_ev is not None:
+            arquivos_redirect.append(Path(arquivo_cargas_ev).resolve())
 
     arquivos_redirect.extend(
         Path(arquivo).resolve()
@@ -362,11 +452,16 @@ def compilar_circuito_simulacao(
 
         executar_comando_dss(f'Redirect "{arquivo_redirect.as_posix()}"')
 
+    inicializar_cargas(
+        configuracoes_cargas=obter_todas_configuracoes_cargas(cenarios=cenarios,),
+    )
 
-def configurar_simulacao_temporal() -> None:
+
+def configurar_simulacao_temporal(hora_simulacao: float) -> None:
     executar_comando_dss("Set Mode=Daily")
     executar_comando_dss("Set Number=1")
     executar_comando_dss("Set Stepsize=1h")
+    executar_comando_dss(f"Set Hour={hora_simulacao}")
 
 
 def executar_solve(hora_simulacao: float) -> bool:
@@ -516,7 +611,7 @@ def coletar_resumo_simulacao(
     except Exception:
         iteracoes = 0
 
-    alimentadores = ",".join(cenario["alimentadores_sorteados"])
+    alimentadores_selecionados = ",".join(cenario["alimentadores_sorteados"])
     arquivo_cargas_ev = cenario["arquivo_cargas_ev"]
 
     diretorio_cargas_ev = (
@@ -541,7 +636,7 @@ def coletar_resumo_simulacao(
             + cenario["quantidade_two_wheelers"]
             + cenario["quantidade_trucks"]
         ),
-        "alimentadores": alimentadores,
+        "alimentadores": alimentadores_selecionados,
         "total_alimentadores": cenario["total_alimentadores_sorteados"],
         "circuito": obter_nome_circuito(),
         "convergiu": bool(dss.Solution.Converged()),
@@ -648,7 +743,7 @@ def salvar_resumo_simulacoes(
 
 
 def imprimir_summary_opendss(resultado: dict) -> None:
-    alimentadores = resultado["alimentadores"] or "SEM EV"
+    alimentadores_selecionados = resultado["alimentadores"] or "SEM EV"
 
     print("")
     print(
@@ -669,7 +764,7 @@ def imprimir_summary_opendss(resultado: dict) -> None:
         f'({resultado["perdas_percentual"]:.3f} %)'
     )
     print(f'Total Reactive Losses: {resultado["perdas_mvar"]:.6f} Mvar')
-    print(f"Alimentadores com EV: {alimentadores}")
+    print(f"Alimentadores com EV: {alimentadores_selecionados}")
     print("-" * 80)
 
 
@@ -797,53 +892,68 @@ def executar_simulacoes_odss(
         arquivo_cargas_ev=arquivo_cargas_ev,
     )
 
+    tempo_inicio_compilacao = time.perf_counter()
+
+    compilar_circuito_unico(
+        arquivo_master=arquivo_dss,
+        cenarios=cenarios,
+        arquivos_extra_redirect=arquivos_extra_redirect,
+    )
+
+    configurar_simulacao_temporal(hora_simulacao=hora_simulacao,)
+    tempo_compilacao_unica = time.perf_counter() - tempo_inicio_compilacao
+
     total_execucoes = len(cenarios)
     resultados = []
 
+    configuracoes_todas = obter_todas_configuracoes_cargas(cenarios=cenarios,)
+
     for indice_cenario, cenario in enumerate(cenarios, start=1):
-        tempo_inicio_compilacao = time.perf_counter()
-
-        compilar_circuito_simulacao(
-            arquivo_master=arquivo_dss,
-            arquivo_cargas_ev=cenario["arquivo_cargas_ev"],
-            arquivos_extra_redirect=arquivos_extra_redirect,
-        )
-
-        configurar_simulacao_temporal()
-        tempo_compilacao = time.perf_counter() - tempo_inicio_compilacao
-
-        tempo_inicio_solve = time.perf_counter()
+        zerar_cargas(configuracoes_cargas=configuracoes_todas,)
         executar_solve(hora_simulacao=hora_simulacao,)
-        tempo_solve = time.perf_counter() - tempo_inicio_solve
 
-        registro_verbose = coletar_verbose_tensao(hora_simulacao=hora_simulacao,)
+        configuracoes_cenario = cenario["configuracoes_cargas"]
+        aplicar_cargas_cenario(configuracoes_cargas=configuracoes_cenario,)
 
-        resultado = coletar_resumo_simulacao(
-            simulacao_global=indice_cenario,
-            total_execucoes=total_execucoes,
-            cenario=cenario,
-            quantidade_simulacoes=len(cenarios),
-            hora_simulacao=hora_simulacao,
-            tempo_compilacao_segundos=tempo_compilacao,
-            tempo_solve_segundos=tempo_solve,
-            arquivos_extra_redirect=arquivos_extra_redirect,
-        )
+        try:
+            tempo_inicio_solve = time.perf_counter()
+            executar_solve(hora_simulacao=hora_simulacao,)
+            tempo_solve = time.perf_counter() - tempo_inicio_solve
 
-        resultados.append(resultado)
+            registro_verbose = coletar_verbose_tensao(hora_simulacao=hora_simulacao,)
 
-        salvar_checkpoint_resultado(
-            resultado=resultado,
-            arquivo_checkpoint=arquivo_checkpoint,
-        )
+            resultado = coletar_resumo_simulacao(
+                simulacao_global=indice_cenario,
+                total_execucoes=total_execucoes,
+                cenario=cenario,
+                quantidade_simulacoes=len(cenarios),
+                hora_simulacao=hora_simulacao,
+                tempo_compilacao_segundos=(
+                    tempo_compilacao_unica
+                    if indice_cenario == 1
+                    else 0.0
+                ),
+                tempo_solve_segundos=tempo_solve,
+                arquivos_extra_redirect=arquivos_extra_redirect,
+            )
 
-        arquivo_verbose = salvar_verbose_simulacao(
-            registros=[registro_verbose],
-            diretorio_resultados=diretorio_resultados,
-            cenario=cenario,
-        )
+            resultados.append(resultado)
 
-        imprimir_andamento(resultado=resultado,)
-        print(f"Verbose: {arquivo_verbose}")
+            salvar_checkpoint_resultado(
+                resultado=resultado,
+                arquivo_checkpoint=arquivo_checkpoint,
+            )
+
+            arquivo_verbose = salvar_verbose_simulacao(
+                registros=[registro_verbose],
+                diretorio_resultados=diretorio_resultados,
+                cenario=cenario,
+            )
+
+            imprimir_andamento(resultado=resultado,)
+            print(f"Verbose: {arquivo_verbose}")
+        finally:
+            zerar_cargas(configuracoes_cargas=configuracoes_cenario,)
 
     arquivo_resumo = salvar_resumo_simulacoes(
         resultados=resultados,
@@ -858,7 +968,7 @@ def executar_simulacoes_odss(
     print("=" * 80)
     print(f"Horário simulado: {hora_simulacao:g}h")
     print(f"Total de cenários: {len(cenarios)}")
-    print(f"Total de execuções: {len(resultados)}")
+    print(f"Compilação única: {tempo_compilacao_unica:.2f} segundos")
     print(f"Tempo total: {tempo_total:.2f} segundos")
     print(f"Resumo: {arquivo_resumo}")
     print(f"Checkpoint: {arquivo_checkpoint}")

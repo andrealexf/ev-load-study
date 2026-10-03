@@ -463,6 +463,37 @@ def configurar_simulacao_temporal(hora_simulacao: float) -> None:
     executar_comando_dss("Set Stepsize=1h")
     executar_comando_dss(f"Set Hour={hora_simulacao}")
 
+def preparar_verbose_opendss(
+    diretorio_resultados: Path,
+    cenario: dict,
+) -> Path:
+    diretorio_verbose = (
+        diretorio_resultados
+        / "verbose_opendss"
+        / f"Sim_{cenario['numero_simulacao']:05d}_{cenario['seed_simulacao']}"
+    )
+
+    diretorio_verbose.mkdir(parents=True, exist_ok=True)
+
+    try:
+        dss.Meters.ResetAll()
+    except Exception:
+        pass
+
+    executar_comando_dss("Set DemandInterval=False", ignorar_erro=True)
+    executar_comando_dss(f'Set DataPath="{diretorio_verbose.resolve().as_posix()}"')
+    executar_comando_dss(f"Set NormVminpu={limite_subtensao_pu}")
+    executar_comando_dss(f"Set NormVmaxpu={limite_sobretensao_pu}")
+    executar_comando_dss("Set OverloadReport=True")
+    executar_comando_dss("Set DIVerbose=True")
+    executar_comando_dss("Set DemandInterval=True")
+
+    return diretorio_verbose
+
+def finalizar_verbose_opendss() -> None:
+    executar_comando_dss("CloseDI", ignorar_erro=True)
+    executar_comando_dss("Set DemandInterval=False", ignorar_erro=True)
+    executar_comando_dss("Set DIVerbose=False", ignorar_erro=True)
 
 def executar_solve(hora_simulacao: float) -> bool:
     executar_comando_dss(f"Set Hour={hora_simulacao}")
@@ -916,8 +947,18 @@ def executar_simulacoes_odss(
         aplicar_cargas_cenario(configuracoes_cargas=configuracoes_cenario,)
 
         try:
+            diretorio_verbose = preparar_verbose_opendss(
+                diretorio_resultados=diretorio_resultados,
+                cenario=cenario,
+            )
+
             tempo_inicio_solve = time.perf_counter()
-            executar_solve(hora_simulacao=hora_simulacao,)
+
+            try:
+                executar_solve(hora_simulacao=hora_simulacao,)
+            finally:
+                finalizar_verbose_opendss()
+
             tempo_solve = time.perf_counter() - tempo_inicio_solve
 
             registro_verbose = coletar_verbose_tensao(hora_simulacao=hora_simulacao,)
@@ -928,11 +969,7 @@ def executar_simulacoes_odss(
                 cenario=cenario,
                 quantidade_simulacoes=len(cenarios),
                 hora_simulacao=hora_simulacao,
-                tempo_compilacao_segundos=(
-                    tempo_compilacao_unica
-                    if indice_cenario == 1
-                    else 0.0
-                ),
+                tempo_compilacao_segundos=tempo_compilacao_unica,
                 tempo_solve_segundos=tempo_solve,
                 arquivos_extra_redirect=arquivos_extra_redirect,
             )
@@ -951,7 +988,9 @@ def executar_simulacoes_odss(
             )
 
             imprimir_andamento(resultado=resultado,)
-            print(f"Verbose: {arquivo_verbose}")
+            print(f"Verbose resumido: {arquivo_verbose}")
+            print(f"Verbose OpenDSS: {diretorio_verbose}")
+
         finally:
             zerar_cargas(configuracoes_cargas=configuracoes_cenario,)
 

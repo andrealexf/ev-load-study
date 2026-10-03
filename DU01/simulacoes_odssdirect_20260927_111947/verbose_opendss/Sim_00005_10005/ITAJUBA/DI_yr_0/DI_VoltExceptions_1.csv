@@ -1,0 +1,2 @@
+"Hour", "Undervoltages", "Min Voltage", "Overvoltage", "Max Voltage", "Min Bus", "Max Bus", "LV Undervoltages", "Min LV Voltage", "LV Overvoltage", "Max LV Voltage", "Min LV Bus", "Max LV Bus"
+19, 0, 0.971622090723333, 3, 1.0544180090379, 164282724, 177830423, 8789, 0.794647076349304, 59, 1.05452784697144, 1010846452, 944832

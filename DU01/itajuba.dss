@@ -114,8 +114,8 @@ New EnergyMeter.M1 element=Line.SMT_000 Terminal=1
 
 Set mode=Daily
 Set stepsize=1h
-Set hour=18
-Set number=4
+!Set hour=18
+Set number=1
 
 Set VoltageBases=[0.22 0.24 13.8]
 CalcVoltageBases
@@ -126,10 +126,10 @@ Set maxcontroliter=10
 Set NormVminpu=0.92
 Set NormVmaxpu=1.05
 
-Set DemandInterval=Yes
-Set DIVerbose=Yes
-Set OverloadReport=Yes
-Set VoltExceptionReport=Yes
+Set DemandInterval=No
+Set DIVerbose=No
+Set OverloadReport=No
+Set VoltExceptionReport=No
 
 buscoords buscoords05.csv
 buscoords buscoords06.csv

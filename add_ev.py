@@ -388,7 +388,7 @@ def gerar_arquivos_por_alimentador(
     diretorio_saida: Path,
     numero_simulacao: int,
     seed: int,
-) -> tuple[dict[str, Path], list[dict]]:
+) -> tuple[dict[str, list[str]], list[dict]]:
     cargas_por_ctmt = defaultdict(list)
     configuracoes_cargas = []
 
@@ -409,24 +409,21 @@ def gerar_arquivos_por_alimentador(
 
     arquivos = {}
 
-
     for ctmt, linhas in cargas_por_ctmt.items():
-        '''
-        arquivo_saida = (
-            Path(diretorio_saida)
-            / f"Cargas_EV_{ctmt}_Sim_{numero_simulacao:05d}_{seed}.dss"
-        )
+        # arquivo_saida = (
+        #     Path(diretorio_saida)
+        #     / f"Cargas_EV_{ctmt}_Sim_{numero_simulacao:05d}_{seed}.dss"
+        # )
+        #
+        # arquivo_saida.parent.mkdir(parents=True, exist_ok=True)
+        #
+        # with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
+        #     for linha in linhas:
+        #         arquivo.write(linha + "\n")
+        #
+        # arquivos[ctmt] = arquivo_saida
 
-        arquivo_saida.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
-            for linha in linhas:
-                arquivo.write(linha + "\n")
-        
-        arquivos[ctmt] = arquivo_saida
-        '''
         arquivos[ctmt] = linhas
-
 
     return arquivos, configuracoes_cargas
 
@@ -508,3 +505,225 @@ def executar_add_ev(
         "total_pool_valido": len(pool_residencial_valido) + len(pool_industrial_valido),
         "total_pool_invalido": len(pool_residencial_invalido) + len(pool_industrial_invalido),
     }
+
+
+def montar_linha_pool_ev(
+    ucbt: dict,
+    classe_ucbt: str,
+    indice_pool: int,
+) -> tuple[str, dict]:
+    linha_original = ucbt["linha_original"]
+    bus1 = obter_parametro_linha(linha_original, "bus1")
+    conn = obter_parametro_linha(linha_original, "conn", "wye")
+    kv = obter_parametro_linha(linha_original, "kv")
+    phases = obter_parametro_linha(linha_original, "phases", "1")
+
+    classe_ucbt = str(classe_ucbt).strip().upper()
+    nome_elemento = f"Load.EVPOOL_{classe_ucbt}_{indice_pool:07d}"
+
+    linha = (
+        f'New "{nome_elemento}" '
+        f'bus1="{bus1}" '
+        f"phases={phases} "
+        f"conn={conn} "
+        f"model=1 "
+        f"kv={kv} "
+        f"kw=0 "
+        f"pf=1 "
+        f"status=variable "
+        f"vmaxpu=1.5 "
+        f"vminpu=0.92 "
+        f"enabled=yes "
+        # f'daily="EV_1" '
+        f"! classe_ucbt={classe_ucbt} "
+        f"ctmt={ucbt['ctmt']} "
+        f"ramal={ucbt['ramal']} "
+        f"pac={ucbt['pac']}"
+    )
+
+    candidato = ucbt.copy()
+    candidato["nome_pool"] = nome_elemento
+    candidato["indice_pool"] = indice_pool
+
+    return linha, candidato
+
+
+def preparar_pool_ev(
+    diretorio_dss_base: Path,
+    diretorio_bdgd: Path,
+    diretorio_saida: Path,
+    incluir_residencial: bool = True,
+    incluir_industrial: bool = True,
+) -> dict:
+    diretorio_saida = Path(diretorio_saida)
+    diretorio_saida.mkdir(parents=True, exist_ok=True)
+
+    pool_residencial_valido = []
+    pool_residencial_invalido = []
+    pool_industrial_valido = []
+    pool_industrial_invalido = []
+
+    if incluir_residencial:
+        pool_residencial_valido, pool_residencial_invalido = carregar_pool_global(
+            diretorio_dss_base=diretorio_dss_base,
+            diretorio_bdgd=diretorio_bdgd,
+            classe_ucbt="RE",
+        )
+
+    if incluir_industrial:
+        pool_industrial_valido, pool_industrial_invalido = carregar_pool_global(
+            diretorio_dss_base=diretorio_dss_base,
+            diretorio_bdgd=diretorio_bdgd,
+            classe_ucbt="IN",
+        )
+
+    candidatos_residenciais = []
+    candidatos_industriais = []
+    linhas_pool = []
+
+    for indice_pool, ucbt in enumerate(pool_residencial_valido, start=1):
+        linha, candidato = montar_linha_pool_ev(
+            ucbt=ucbt,
+            classe_ucbt="RE",
+            indice_pool=indice_pool,
+        )
+        linhas_pool.append(linha)
+        candidatos_residenciais.append(candidato)
+
+    for indice_pool, ucbt in enumerate(pool_industrial_valido, start=1):
+        linha, candidato = montar_linha_pool_ev(
+            ucbt=ucbt,
+            classe_ucbt="IN",
+            indice_pool=indice_pool,
+        )
+        linhas_pool.append(linha)
+        candidatos_industriais.append(candidato)
+
+    arquivo_pool = diretorio_saida / "Cargas_EV_Pool.dss"
+
+    with open(arquivo_pool, "w", encoding="utf-8") as arquivo:
+        for linha in linhas_pool:
+            arquivo.write(linha + "\n")
+
+    return {
+        "arquivo_pool": arquivo_pool,
+        "pool_residencial": candidatos_residenciais,
+        "pool_industrial": candidatos_industriais,
+        "total_pool_residencial_valido": len(pool_residencial_valido),
+        "total_pool_residencial_invalido": len(pool_residencial_invalido),
+        "total_pool_industrial_valido": len(pool_industrial_valido),
+        "total_pool_industrial_invalido": len(pool_industrial_invalido),
+        "total_pool_valido": len(pool_residencial_valido) + len(pool_industrial_valido),
+        "total_pool_invalido": len(pool_residencial_invalido) + len(pool_industrial_invalido),
+    }
+
+
+def montar_configuracao_cenario_pool(ucbt: dict, tipo: str) -> dict:
+    if tipo == "LDV":
+        kw = potencia_ldv_kw
+    elif tipo == "TW":
+        kw = potencia_two_wheeler_kw
+    elif tipo == "TRUCK":
+        kw = potencia_truck_kw
+    else:
+        raise ValueError(f"Tipo inválido: {tipo}")
+
+    return {
+        "nome": ucbt["nome_pool"],
+        "kw_ativo": float(kw),
+        "tipo": tipo,
+        "classe_ucbt": ucbt.get("classe_ucbt", ""),
+        "ctmt": ucbt["ctmt"],
+        "ramal": ucbt["ramal"],
+        "pac": ucbt["pac"],
+    }
+
+
+def sortear_cenario_pool_ev(
+    pool_residencial: list[dict],
+    pool_industrial: list[dict],
+    quantidade_ldv: int,
+    quantidade_two_wheelers: int,
+    quantidade_trucks: int,
+    numero_simulacao: int,
+    seed: int,
+) -> dict:
+    quantidade_residencial = quantidade_ldv + quantidade_two_wheelers
+
+    selecionadas_residenciais = selecionar_ucbts_globalmente(
+        pool_valido=pool_residencial,
+        quantidade=quantidade_residencial,
+        seed=seed,
+    )
+
+    ldvs = selecionadas_residenciais[:quantidade_ldv]
+    tws = selecionadas_residenciais[quantidade_ldv:]
+
+    trucks = selecionar_ucbts_globalmente(
+        pool_valido=pool_industrial,
+        quantidade=quantidade_trucks,
+        seed=seed + 50000,
+    )
+
+    configuracoes_cargas = []
+
+    for ucbt in ldvs:
+        configuracoes_cargas.append(
+            montar_configuracao_cenario_pool(ucbt=ucbt, tipo="LDV",)
+        )
+
+    for ucbt in tws:
+        configuracoes_cargas.append(
+            montar_configuracao_cenario_pool(ucbt=ucbt, tipo="TW",)
+        )
+
+    for ucbt in trucks:
+        configuracoes_cargas.append(
+            montar_configuracao_cenario_pool(ucbt=ucbt, tipo="TRUCK",)
+        )
+
+    alimentadores_sorteados = sorted(
+        {
+            configuracao["ctmt"]
+            for configuracao in configuracoes_cargas
+            if configuracao.get("ctmt")
+        }
+    )
+
+    return {
+        "numero_simulacao": numero_simulacao,
+        "seed_simulacao": seed,
+        "quantidade_ldv": quantidade_ldv,
+        "quantidade_two_wheelers": quantidade_two_wheelers,
+        "quantidade_trucks": quantidade_trucks,
+        "configuracoes_cargas": configuracoes_cargas,
+        "nomes_cargas": [item["nome"] for item in configuracoes_cargas],
+        "alimentadores_sorteados": alimentadores_sorteados,
+        "total_alimentadores_sorteados": len(alimentadores_sorteados),
+        "modo_simulacao": "COM_EV_POOL",
+    }
+
+
+def salvar_cenario_pool_ev(
+    configuracoes_cargas: list[dict],
+    diretorio_saida: Path,
+    numero_simulacao: int,
+    seed: int,
+) -> Path:
+    arquivo_saida = (
+        Path(diretorio_saida)
+        / f"Cargas_EV_Sim_{numero_simulacao:05d}_{seed}.dss"
+    )
+
+    with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
+        for configuracao in configuracoes_cargas:
+            arquivo.write(
+                f"Edit {configuracao['nome']} "
+                f"kW={configuracao['kw_ativo']:.12g} "
+                f"! tipo={configuracao['tipo']} "
+                f"ctmt={configuracao['ctmt']} "
+                f"ramal={configuracao['ramal']} "
+                f"pac={configuracao['pac']}\n"
+            )
+
+    return arquivo_saida

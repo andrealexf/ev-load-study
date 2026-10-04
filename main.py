@@ -5,16 +5,17 @@ from bdgd_extract import executar_extracao_ucbt
 from odss_sim import executar_simulacoes_odss, gerar_cargas_ev_cenario
 
 
-quantidade_ldv = 30
-quantidade_two_wheelers = 15
-quantidade_trucks = 4
-quantidade_simulacoes = 5
-horas_simulacao = [18]
+quantidade_ldv = 300 #30
+quantidade_two_wheelers = 150 #15
+quantidade_trucks = 4 #4
+quantidade_simulacoes = 3 #5
+horas_simulacao = [19]
+
 numero_simulacao_geracao = 1
 seed_geracao = 10001
 
-extrair_bdgd = False #nao deixar true
-gerar_cargas_ev = True
+extrair_bdgd = False
+gerar_arquivo_cargas_ev = False
 gerar_busmarker = False
 simular = True
 
@@ -44,9 +45,10 @@ def main():
             gdb_path=gdb_path,
         )
 
-    if gerar_cargas_ev and (
+    if gerar_arquivo_cargas_ev and (
         quantidade_ldv is not None
         or quantidade_two_wheelers is not None
+        or quantidade_trucks is not None
     ):
         cenario_ev = gerar_cargas_ev_cenario(
             quantidade_ldv=quantidade_ldv or 0,
@@ -75,12 +77,14 @@ def main():
             arquivo_dss=arquivo_master_dss,
             diretorio_dss_base=diretorio_dss_base,
             diretorio_bdgd=diretorio_bdgd,
-            #arquivo_cargas_ev=arquivo_cargas_ev,
             arquivos_extra_redirect=arquivos_extra_redirect,
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,
+            quantidade_trucks=quantidade_trucks,
             quantidade_simulacoes=quantidade_simulacoes,
             horas_simulacao=horas_simulacao,
+            salvar_arquivos_cenario=True,
+            verbose_opendss_completo=True,
         )
 
 

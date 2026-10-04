@@ -1,0 +1,2 @@
+DateTime, CaseName, Status, Mode, Number, LoadMult, NumDevices, NumBuses, NumNodes, Iterations, ControlMode, ControlIterations, MostIterationsDone, Year, Hour, MaxPuVoltage, MinPuVoltage, TotalMW, TotalMvar, MWLosses, pctLosses, MvarLosses, Frequency
+"04/10/2026 15:45:05", ITAJUBA, SOLVED, Daily, 1,    1.000, 274854, 114318, 327345, 9, Static, 2, 5, 0, 20, 1.0616, 0.78447, 25.6038, 11.1232, 1.25967, 4.92, 1.25834, 60

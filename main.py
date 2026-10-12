@@ -4,11 +4,10 @@ from add_bus_marker import executar_add_bus_marker
 from bdgd_extract import executar_extracao_ucbt
 from odss_sim import executar_simulacoes_odss, gerar_cargas_ev_cenario
 
-
-quantidade_ldv = 300 #30
-quantidade_two_wheelers = 150 #15
-quantidade_trucks = 4 #4
-quantidade_simulacoes = 3 #5
+quantidade_ldv = 596 #30
+quantidade_two_wheelers = 70 #15
+quantidade_trucks = 11 #4
+quantidade_simulacoes = 500 #5
 horas_simulacao = [19]
 
 numero_simulacao_geracao = 1

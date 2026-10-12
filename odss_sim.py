@@ -3,6 +3,7 @@ from datetime import datetime
 import csv
 import re
 import time
+import secrets
 
 try:
     from opendssdirect import dss
@@ -23,7 +24,7 @@ from add_ev import (
 )
 
 
-seed_base_simulacao = 10000
+seeds_usadas = set()
 tensao_minima_considerada_pu = 0.4
 limite_subtensao_pu = 0.92
 limite_sobretensao_pu = 1.05
@@ -38,7 +39,12 @@ def criar_diretorio_resultados(arquivo_dss: Path) -> Path:
 
 
 def gerar_seed_simulacao(numero_simulacao: int) -> int:
-    return seed_base_simulacao + numero_simulacao
+    while True:
+        seed = secrets.randbelow(2_000_000_000) + 1
+
+        if seed not in seeds_usadas:
+            seeds_usadas.add(seed)
+            return seed
 
 
 def simulacao_com_ev(

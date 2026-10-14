@@ -19,6 +19,16 @@ alimentadores = [
 potencia_ldv_kw = 3.5
 potencia_two_wheeler_kw = 2.0
 potencia_truck_kw = 50.0
+potencia_bus_kw = 22.0
+tensao_bus_kv = 13.8
+conexao_bus = "wye"
+
+barras_buses = [
+    "5000984312.2.3.4",
+    "710101.1.2.3.4",
+    "549941B.1.2.3",
+    "509348B.1.2.3",
+]
 
 cache_cargas_dss = {}
 cache_ucbts = {}
@@ -316,6 +326,117 @@ def selecionar_ucbts_globalmente(
     return sorteador.sample(pool_valido, quantidade)
 
 
+def obter_fases_padrao_barra(bus1: str) -> int:
+    partes = str(bus1).split(".")[1:]
+
+    if not partes:
+        return 3
+
+    if "4" in partes:
+        return max(1, len(partes) - 1)
+
+    return max(1, len(partes))
+
+
+def localizar_referencia_barra_bus(
+    diretorio_dss_base: Path,
+    barra: str,
+) -> dict:
+    del diretorio_dss_base
+
+    barra = str(barra).strip()
+    barra_base = barra.split(".")[0]
+
+    return {
+        "bus1": barra,
+        "phases": str(obter_fases_padrao_barra(barra)),
+        "conn": conexao_bus,
+        "kv": str(tensao_bus_kv),
+        "ctmt": "BUS",
+        "ramal": barra_base,
+        "pac": barra_base,
+        "classe_ucbt": "BUS",
+    }
+
+
+def carregar_barras_buses(diretorio_dss_base: Path) -> list[dict]:
+    return [
+        {
+            **localizar_referencia_barra_bus(
+                diretorio_dss_base=diretorio_dss_base,
+                barra=barra,
+            ),
+            "indice_barra_bus": indice_barra,
+        }
+        for indice_barra, barra in enumerate(barras_buses, start=1)
+    ]
+
+
+def selecionar_buses_fixos(
+    diretorio_dss_base: Path,
+    quantidade: int,
+    seed: int,
+) -> list[dict]:
+    if quantidade <= 0:
+        return []
+
+    referencias = carregar_barras_buses(diretorio_dss_base=diretorio_dss_base,)
+    sorteador = random.Random(seed + 100000)
+    selecionados = []
+
+    for indice_bus in range(1, quantidade + 1):
+        referencia = sorteador.choice(referencias).copy()
+        referencia["indice_bus"] = indice_bus
+        selecionados.append(referencia)
+
+    return selecionados
+
+
+def montar_linha_bus(
+    referencia: dict,
+    indice_bus: int,
+    seed: int,
+) -> tuple[str, dict]:
+    nome_elemento = (
+        f"Load.BUS_S{seed}_"
+        f"{indice_bus:04d}_B{referencia['indice_barra_bus']}"
+    )
+
+    linha = (
+        f'New "{nome_elemento}" '
+        f'bus1="{referencia["bus1"]}" '
+        f'phases={referencia["phases"]} '
+        f'conn={referencia["conn"]} '
+        f'model=1 '
+        f'kv={referencia["kv"]} '
+        f'kw={potencia_bus_kw} '
+        f'pf=1 '
+        f'status=variable '
+        f'vmaxpu=1.5 '
+        f'vminpu=0.92 '
+        f'enabled=yes '
+        # f'daily="EV_1" '
+        f'! tipo=BUS '
+        f'kw_ativo={potencia_bus_kw} '
+        f'ctmt={referencia.get("ctmt", "")} '
+        f'bus1={referencia["bus1"]} '
+        f'pac={referencia["pac"]}'
+    )
+
+    configuracao = {
+        "nome": nome_elemento,
+        "kw_ativo": float(potencia_bus_kw),
+        "tipo": "BUS",
+        "classe_ucbt": "BUS",
+        "ctmt": referencia.get("ctmt", ""),
+        "ramal": referencia.get("ramal", ""),
+        "pac": referencia["pac"],
+        "bus1": referencia["bus1"],
+    }
+
+    return linha, configuracao
+
+
 def montar_linha_ev(ucbt: dict, tipo: str, seed: int) -> tuple[str, dict]:
     linha_original = ucbt["linha_original"]
     nome_original = extrair_nome_carga(linha_original)
@@ -337,6 +458,9 @@ def montar_linha_ev(ucbt: dict, tipo: str, seed: int) -> tuple[str, dict]:
     elif tipo == "TRUCK":
         prefixo = "TRUCK"
         kw = potencia_truck_kw
+    elif tipo == "BUS":
+        prefixo = "BUS"
+        kw = potencia_bus_kw
     else:
         raise ValueError(f"Tipo inválido: {tipo}")
 
@@ -385,6 +509,7 @@ def gerar_arquivos_por_alimentador(
     ldvs: list[dict],
     tws: list[dict],
     trucks: list[dict],
+    buses: list[dict],
     diretorio_saida: Path,
     numero_simulacao: int,
     seed: int,
@@ -405,6 +530,16 @@ def gerar_arquivos_por_alimentador(
     for ucbt in trucks:
         linha, configuracao = montar_linha_ev(ucbt=ucbt, tipo="TRUCK", seed=seed,)
         cargas_por_ctmt[ucbt["ctmt"]].append(linha)
+        configuracoes_cargas.append(configuracao)
+
+    for indice_bus, referencia in enumerate(buses, start=1):
+        linha, configuracao = montar_linha_bus(
+            referencia=referencia,
+            indice_bus=indice_bus,
+            seed=seed,
+        )
+        ctmt = referencia.get("ctmt", "BUS") or "BUS"
+        cargas_por_ctmt[ctmt].append(linha)
         configuracoes_cargas.append(configuracao)
 
     arquivos = {}
@@ -437,15 +572,23 @@ def executar_add_ev(
     numero_simulacao: int,
     seed: int,
     quantidade_trucks: int = 0,
+    quantidade_buses: int = 0,
 ) -> dict:
-    if quantidade_ldv < 0 or quantidade_two_wheelers < 0 or quantidade_trucks < 0:
+    quantidades = [
+        quantidade_ldv,
+        quantidade_two_wheelers,
+        quantidade_trucks,
+        quantidade_buses,
+    ]
+
+    if any(quantidade < 0 for quantidade in quantidades):
         raise ValueError("As quantidades não podem ser negativas.")
 
     quantidade_residencial = quantidade_ldv + quantidade_two_wheelers
-    quantidade_total = quantidade_residencial + quantidade_trucks
+    quantidade_total = quantidade_residencial + quantidade_trucks + quantidade_buses
 
-    if quantidade_total <= 0:
-        raise ValueError("A quantidade total de veículos deve ser maior que zero.")
+    # if quantidade_total <= 0:
+    #     raise ValueError("A quantidade total de veículos deve ser maior que zero.")
 
     pool_residencial_valido = []
     pool_residencial_invalido = []
@@ -481,10 +624,17 @@ def executar_add_ev(
         seed=seed + 50000,
     )
 
+    buses = selecionar_buses_fixos(
+        diretorio_dss_base=diretorio_dss_base,
+        quantidade=quantidade_buses,
+        seed=seed,
+    )
+
     arquivos, configuracoes_cargas = gerar_arquivos_por_alimentador(
         ldvs=ldvs,
         tws=tws,
         trucks=trucks,
+        buses=buses,
         diretorio_saida=diretorio_saida,
         numero_simulacao=numero_simulacao,
         seed=seed,
@@ -495,6 +645,7 @@ def executar_add_ev(
         "ldvs": ldvs,
         "tws": tws,
         "trucks": trucks,
+        "buses": buses,
         "nomes_cargas": [item["nome"] for item in configuracoes_cargas],
         "configuracoes_cargas": configuracoes_cargas,
         "arquivos_por_alimentador": arquivos,
@@ -502,8 +653,15 @@ def executar_add_ev(
         "total_pool_residencial_invalido": len(pool_residencial_invalido),
         "total_pool_industrial_valido": len(pool_industrial_valido),
         "total_pool_industrial_invalido": len(pool_industrial_invalido),
-        "total_pool_valido": len(pool_residencial_valido) + len(pool_industrial_valido),
-        "total_pool_invalido": len(pool_residencial_invalido) + len(pool_industrial_invalido),
+        "total_pool_valido": (
+            len(pool_residencial_valido)
+            + len(pool_industrial_valido)
+            + (len(barras_buses) if quantidade_buses > 0 else 0)
+        ),
+        "total_pool_invalido": (
+            len(pool_residencial_invalido)
+            + len(pool_industrial_invalido)
+        ),
     }
 
 
@@ -544,8 +702,55 @@ def montar_linha_pool_ev(
     candidato = ucbt.copy()
     candidato["nome_pool"] = nome_elemento
     candidato["indice_pool"] = indice_pool
+    candidato["bus1"] = bus1
 
     return linha, candidato
+
+
+def montar_linhas_pool_buses(
+    diretorio_dss_base: Path,
+    quantidade_buses: int,
+) -> tuple[list[str], list[dict]]:
+    if quantidade_buses <= 0:
+        return [], []
+
+    referencias = carregar_barras_buses(diretorio_dss_base=diretorio_dss_base,)
+    linhas = []
+    candidatos = []
+
+    for indice_bus in range(1, quantidade_buses + 1):
+        for referencia in referencias:
+            nome_elemento = (
+                f"Load.EVPOOL_BUS_{indice_bus:04d}_"
+                f"B{referencia['indice_barra_bus']}"
+            )
+            linha = (
+                f'New "{nome_elemento}" '
+                f'bus1="{referencia["bus1"]}" '
+                f'phases={referencia["phases"]} '
+                f'conn={referencia["conn"]} '
+                f'model=1 '
+                f'kv={referencia["kv"]} '
+                f'kw=0 '
+                f'pf=1 '
+                f'status=variable '
+                f'vmaxpu=1.5 '
+                f'vminpu=0.92 '
+                f'enabled=yes '
+                # f'daily="EV_1" '
+                f'! tipo=BUS '
+                f'ctmt={referencia.get("ctmt", "")} '
+                f'bus1={referencia["bus1"]} '
+                f'pac={referencia["pac"]}'
+            )
+
+            candidato = referencia.copy()
+            candidato["nome_pool"] = nome_elemento
+            candidato["indice_bus"] = indice_bus
+            linhas.append(linha)
+            candidatos.append(candidato)
+
+    return linhas, candidatos
 
 
 def preparar_pool_ev(
@@ -554,6 +759,7 @@ def preparar_pool_ev(
     diretorio_saida: Path,
     incluir_residencial: bool = True,
     incluir_industrial: bool = True,
+    quantidade_buses: int = 0,
 ) -> dict:
     diretorio_saida = Path(diretorio_saida)
     diretorio_saida.mkdir(parents=True, exist_ok=True)
@@ -599,6 +805,12 @@ def preparar_pool_ev(
         linhas_pool.append(linha)
         candidatos_industriais.append(candidato)
 
+    linhas_buses, candidatos_buses = montar_linhas_pool_buses(
+        diretorio_dss_base=diretorio_dss_base,
+        quantidade_buses=quantidade_buses,
+    )
+    linhas_pool.extend(linhas_buses)
+
     arquivo_pool = diretorio_saida / "Cargas_EV_Pool.dss"
 
     with open(arquivo_pool, "w", encoding="utf-8") as arquivo:
@@ -609,12 +821,21 @@ def preparar_pool_ev(
         "arquivo_pool": arquivo_pool,
         "pool_residencial": candidatos_residenciais,
         "pool_industrial": candidatos_industriais,
+        "pool_buses": candidatos_buses,
         "total_pool_residencial_valido": len(pool_residencial_valido),
         "total_pool_residencial_invalido": len(pool_residencial_invalido),
         "total_pool_industrial_valido": len(pool_industrial_valido),
         "total_pool_industrial_invalido": len(pool_industrial_invalido),
-        "total_pool_valido": len(pool_residencial_valido) + len(pool_industrial_valido),
-        "total_pool_invalido": len(pool_residencial_invalido) + len(pool_industrial_invalido),
+        "total_pool_buses": len(candidatos_buses),
+        "total_pool_valido": (
+            len(pool_residencial_valido)
+            + len(pool_industrial_valido)
+            + len(candidatos_buses)
+        ),
+        "total_pool_invalido": (
+            len(pool_residencial_invalido)
+            + len(pool_industrial_invalido)
+        ),
     }
 
 
@@ -625,6 +846,8 @@ def montar_configuracao_cenario_pool(ucbt: dict, tipo: str) -> dict:
         kw = potencia_two_wheeler_kw
     elif tipo == "TRUCK":
         kw = potencia_truck_kw
+    elif tipo == "BUS":
+        kw = potencia_bus_kw
     else:
         raise ValueError(f"Tipo inválido: {tipo}")
 
@@ -633,18 +856,21 @@ def montar_configuracao_cenario_pool(ucbt: dict, tipo: str) -> dict:
         "kw_ativo": float(kw),
         "tipo": tipo,
         "classe_ucbt": ucbt.get("classe_ucbt", ""),
-        "ctmt": ucbt["ctmt"],
-        "ramal": ucbt["ramal"],
-        "pac": ucbt["pac"],
+        "ctmt": ucbt.get("ctmt", ""),
+        "ramal": ucbt.get("ramal", ""),
+        "pac": ucbt.get("pac", ""),
+        "bus1": ucbt.get("bus1", ""),
     }
 
 
 def sortear_cenario_pool_ev(
     pool_residencial: list[dict],
     pool_industrial: list[dict],
+    pool_buses: list[dict],
     quantidade_ldv: int,
     quantidade_two_wheelers: int,
     quantidade_trucks: int,
+    quantidade_buses: int,
     numero_simulacao: int,
     seed: int,
 ) -> dict:
@@ -665,6 +891,23 @@ def sortear_cenario_pool_ev(
         seed=seed + 50000,
     )
 
+    buses = []
+    sorteador_buses = random.Random(seed + 100000)
+
+    for indice_bus in range(1, quantidade_buses + 1):
+        candidatos_bus = [
+            candidato
+            for candidato in pool_buses
+            if candidato.get("indice_bus") == indice_bus
+        ]
+
+        if not candidatos_bus:
+            raise ValueError(
+                f"Pool BUS não possui candidatos para o ônibus {indice_bus}."
+            )
+
+        buses.append(sorteador_buses.choice(candidatos_bus))
+
     configuracoes_cargas = []
 
     for ucbt in ldvs:
@@ -682,6 +925,11 @@ def sortear_cenario_pool_ev(
             montar_configuracao_cenario_pool(ucbt=ucbt, tipo="TRUCK",)
         )
 
+    for referencia in buses:
+        configuracoes_cargas.append(
+            montar_configuracao_cenario_pool(ucbt=referencia, tipo="BUS",)
+        )
+
     alimentadores_sorteados = sorted(
         {
             configuracao["ctmt"]
@@ -696,6 +944,8 @@ def sortear_cenario_pool_ev(
         "quantidade_ldv": quantidade_ldv,
         "quantidade_two_wheelers": quantidade_two_wheelers,
         "quantidade_trucks": quantidade_trucks,
+        "quantidade_buses": quantidade_buses,
+        "buses": buses,
         "configuracoes_cargas": configuracoes_cargas,
         "nomes_cargas": [item["nome"] for item in configuracoes_cargas],
         "alimentadores_sorteados": alimentadores_sorteados,
@@ -723,7 +973,8 @@ def salvar_cenario_pool_ev(
                 f"! tipo={configuracao['tipo']} "
                 f"ctmt={configuracao['ctmt']} "
                 f"ramal={configuracao['ramal']} "
-                f"pac={configuracao['pac']}\n"
+                f"pac={configuracao['pac']} "
+                f"bus1={configuracao.get('bus1', '')}\n"
             )
 
     return arquivo_saida

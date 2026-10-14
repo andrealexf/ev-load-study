@@ -2,8 +2,8 @@ from pathlib import Path
 from datetime import datetime
 import csv
 import re
-import time
 import secrets
+import time
 
 try:
     from opendssdirect import dss
@@ -51,11 +51,13 @@ def simulacao_com_ev(
     quantidade_ldv: int | None,
     quantidade_two_wheelers: int | None,
     quantidade_trucks: int | None,
+    quantidade_buses: int | None,
 ) -> bool:
     return (
         quantidade_ldv is not None
         or quantidade_two_wheelers is not None
         or quantidade_trucks is not None
+        or quantidade_buses is not None
     )
 
 
@@ -203,6 +205,7 @@ def gerar_cargas_ev_cenario(
     numero_simulacao: int = 1,
     seed_simulacao: int | None = None,
     quantidade_trucks: int = 0,
+    quantidade_buses: int = 0,
 ) -> dict:
     if seed_simulacao is None:
         seed_simulacao = gerar_seed_simulacao(numero_simulacao=numero_simulacao,)
@@ -213,6 +216,7 @@ def gerar_cargas_ev_cenario(
         quantidade_ldv=quantidade_ldv,
         quantidade_two_wheelers=quantidade_two_wheelers,
         quantidade_trucks=quantidade_trucks,
+        quantidade_buses=quantidade_buses,
         diretorio_dss_base=diretorio_dss_base,
         diretorio_bdgd=diretorio_bdgd,
         diretorio_saida=diretorio_resultados,
@@ -238,6 +242,7 @@ def gerar_cargas_ev_cenario(
         "quantidade_ldv": quantidade_ldv,
         "quantidade_two_wheelers": quantidade_two_wheelers,
         "quantidade_trucks": quantidade_trucks,
+        "quantidade_buses": quantidade_buses,
         "arquivo_cargas_ev": arquivo_cargas_ev,
         "nomes_cargas": resultado_sorteio["nomes_cargas"],
         "configuracoes_cargas": resultado_sorteio["configuracoes_cargas"],
@@ -255,6 +260,7 @@ def preparar_cenario_com_ev(
     quantidade_ldv: int,
     quantidade_two_wheelers: int,
     quantidade_trucks: int,
+    quantidade_buses: int,
     diretorio_dss_base: Path,
     diretorio_bdgd: Path,
     diretorio_resultados: Path,
@@ -263,6 +269,7 @@ def preparar_cenario_com_ev(
         quantidade_ldv=quantidade_ldv,
         quantidade_two_wheelers=quantidade_two_wheelers,
         quantidade_trucks=quantidade_trucks,
+        quantidade_buses=quantidade_buses,
         diretorio_dss_base=diretorio_dss_base,
         diretorio_bdgd=diretorio_bdgd,
         diretorio_resultados=diretorio_resultados,
@@ -276,6 +283,7 @@ def preparar_cenario_com_arquivo_ev(
     quantidade_ldv: int | None,
     quantidade_two_wheelers: int | None,
     quantidade_trucks: int | None,
+    quantidade_buses: int | None,
 ) -> dict:
     arquivo_cargas_ev = Path(arquivo_cargas_ev)
 
@@ -289,6 +297,7 @@ def preparar_cenario_com_arquivo_ev(
         "quantidade_ldv": quantidade_ldv or 0,
         "quantidade_two_wheelers": quantidade_two_wheelers or 0,
         "quantidade_trucks": quantidade_trucks or 0,
+        "quantidade_buses": quantidade_buses or 0,
         "arquivo_cargas_ev": arquivo_cargas_ev,
         "configuracoes_cargas": configuracoes_cargas,
         "nomes_cargas": [item["nome"] for item in configuracoes_cargas],
@@ -308,6 +317,7 @@ def preparar_cenario_sem_ev(numero_simulacao: int) -> dict:
         "quantidade_ldv": 0,
         "quantidade_two_wheelers": 0,
         "quantidade_trucks": 0,
+        "quantidade_buses": 0,
         "arquivo_cargas_ev": None,
         "nomes_cargas": [],
         "configuracoes_cargas": [],
@@ -325,6 +335,7 @@ def preparar_cenarios(
     quantidade_ldv: int | None,
     quantidade_two_wheelers: int | None,
     quantidade_trucks: int | None,
+    quantidade_buses: int | None,
     diretorio_dss_base: Path | None,
     diretorio_bdgd: Path | None,
     diretorio_resultados: Path,
@@ -337,6 +348,7 @@ def preparar_cenarios(
                 quantidade_ldv=quantidade_ldv,
                 quantidade_two_wheelers=quantidade_two_wheelers,
                 quantidade_trucks=quantidade_trucks,
+                quantidade_buses=quantidade_buses,
             )
         ]
 
@@ -344,6 +356,7 @@ def preparar_cenarios(
         quantidade_ldv=quantidade_ldv,
         quantidade_two_wheelers=quantidade_two_wheelers,
         quantidade_trucks=quantidade_trucks,
+        quantidade_buses=quantidade_buses,
     )
 
     if not usar_ev:
@@ -362,6 +375,7 @@ def preparar_cenarios(
     quantidade_ldv = quantidade_ldv or 0
     quantidade_two_wheelers = quantidade_two_wheelers or 0
     quantidade_trucks = quantidade_trucks or 0
+    quantidade_buses = quantidade_buses or 0
 
     cenarios = []
 
@@ -372,6 +386,7 @@ def preparar_cenarios(
                 quantidade_ldv=quantidade_ldv,
                 quantidade_two_wheelers=quantidade_two_wheelers,
                 quantidade_trucks=quantidade_trucks,
+                quantidade_buses=quantidade_buses,
                 diretorio_dss_base=Path(diretorio_dss_base),
                 diretorio_bdgd=Path(diretorio_bdgd),
                 diretorio_resultados=diretorio_resultados,
@@ -553,7 +568,8 @@ def montar_sufixo_resultado(cenario: dict) -> str:
         f"{cenario['seed_simulacao']}_"
         f"{int(cenario['quantidade_ldv']):04d}_"
         f"{int(cenario['quantidade_two_wheelers']):04d}_"
-        f"{int(cenario['quantidade_trucks']):02d}"
+        f"{int(cenario['quantidade_trucks']):02d}_"
+        f"{int(cenario.get('quantidade_buses', 0)):02d}"
     )
 
 
@@ -585,18 +601,18 @@ def exportar_verbose_opendss(
     exportacoes = [
         ("Voltages", f"Voltages_{sufixo_resultado}.csv"),
         ("SeqVoltages", f"SeqVoltages_{sufixo_resultado}.csv"),
-        #("Currents", f"Currents_{sufixo_resultado}.csv"),
-        #("SeqCurrents", f"SeqCurrents_{sufixo_resultado}.csv"),
-        #("Powers", f"Powers_{sufixo_resultado}.csv"),
-        #("SeqPowers", f"SeqPowers_{sufixo_resultado}.csv"),
+        # ("Currents", f"Currents_{sufixo_resultado}.csv"),
+        # ("SeqCurrents", f"SeqCurrents_{sufixo_resultado}.csv"),
+        # ("Powers", f"Powers_{sufixo_resultado}.csv"),
+        # ("SeqPowers", f"SeqPowers_{sufixo_resultado}.csv"),
         ("Losses", f"Losses_{sufixo_resultado}.csv"),
         ("Overloads", f"Overloads_{sufixo_resultado}.csv"),
-        #("Meters", f"Meters_{sufixo_resultado}.csv"),
-        #("Taps", f"Taps_{sufixo_resultado}.csv"),
+        # ("Meters", f"Meters_{sufixo_resultado}.csv"),
+        # ("Taps", f"Taps_{sufixo_resultado}.csv"),
         ("Summary", f"Summary_{sufixo_resultado}.csv"),
-        #("ElemVoltages", f"ElemVoltages_{sufixo_resultado}.csv"),
-        #("ElemCurrents", f"ElemCurrents_{sufixo_resultado}.csv"),
-        #("ElemPowers", f"ElemPowers_{sufixo_resultado}.csv"),
+        # ("ElemVoltages", f"ElemVoltages_{sufixo_resultado}.csv"),
+        # ("ElemCurrents", f"ElemCurrents_{sufixo_resultado}.csv"),
+        # ("ElemPowers", f"ElemPowers_{sufixo_resultado}.csv"),
     ]
 
     exportacoes_ok = []
@@ -1000,10 +1016,12 @@ def coletar_resumo_simulacao(
         "ldv": cenario["quantidade_ldv"],
         "two_wheelers": cenario["quantidade_two_wheelers"],
         "trucks": cenario["quantidade_trucks"],
+        "buses": cenario.get("quantidade_buses", 0),
         "total_ev": (
             cenario["quantidade_ldv"]
             + cenario["quantidade_two_wheelers"]
             + cenario["quantidade_trucks"]
+            + cenario.get("quantidade_buses", 0)
         ),
         "alimentadores": alimentadores_selecionados,
         "total_alimentadores": cenario["total_alimentadores_sorteados"],
@@ -1051,6 +1069,7 @@ def colunas_resultado() -> list[str]:
         "ldv",
         "two_wheelers",
         "trucks",
+        "buses",
         "total_ev",
         "alimentadores",
         "total_alimentadores",
@@ -1144,6 +1163,7 @@ def imprimir_andamento(resultado: dict) -> None:
         f'LDV: {resultado["ldv"]} | '
         f'TW: {resultado["two_wheelers"]} | '
         f'Truck: {resultado["trucks"]} | '
+        f'Bus: {resultado["buses"]} | '
         f'Convergiu: {"SIM" if resultado["convergiu"] else "NÃO"} | '
         f'Tensão min: {resultado["tensao_minima_pu"]:.6f} pu | '
         f'Tensão max: {resultado["tensao_maxima_pu"]:.6f} pu'
@@ -1161,6 +1181,7 @@ def executar_simulacoes_pool_ev(
     quantidade_ldv: int,
     quantidade_two_wheelers: int,
     quantidade_trucks: int,
+    quantidade_buses: int,
     quantidade_simulacoes: int,
     hora_simulacao: float,
     arquivos_extra_redirect: list[Path] | None = None,
@@ -1175,10 +1196,12 @@ def executar_simulacoes_pool_ev(
         diretorio_saida=diretorio_resultados,
         incluir_residencial=(quantidade_ldv + quantidade_two_wheelers) > 0,
         incluir_industrial=quantidade_trucks > 0,
+        quantidade_buses=quantidade_buses,
     )
 
     pool_residencial = pool_ev["pool_residencial"]
     pool_industrial = pool_ev["pool_industrial"]
+    pool_buses = pool_ev["pool_buses"]
     arquivo_pool = pool_ev["arquivo_pool"]
 
     quantidade_residencial = quantidade_ldv + quantidade_two_wheelers
@@ -1204,8 +1227,10 @@ def executar_simulacoes_pool_ev(
     print(f"LDV: {quantidade_ldv}")
     print(f"TW: {quantidade_two_wheelers}")
     print(f"Trucks: {quantidade_trucks}")
+    print(f"Buses: {quantidade_buses}")
     print(f"Pool residencial: {len(pool_residencial)}")
     print(f"Pool industrial: {len(pool_industrial)}")
+    print(f"Pool BUS: {len(pool_buses)} elementos")
     print(f"Verbose pós-Solve: {verbose_opendss_completo}")
     print("=" * 80, flush=True)
 
@@ -1251,9 +1276,11 @@ def executar_simulacoes_pool_ev(
         cenario = sortear_cenario_pool_ev(
             pool_residencial=pool_residencial,
             pool_industrial=pool_industrial,
+            pool_buses=pool_buses,
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,
             quantidade_trucks=quantidade_trucks,
+            quantidade_buses=quantidade_buses,
             numero_simulacao=numero_simulacao,
             seed=seed_simulacao,
         )
@@ -1394,6 +1421,7 @@ def executar_simulacoes_pool_ev(
     print(f"Total de cenários: {quantidade_simulacoes}")
     print(f"Pool residencial: {len(pool_residencial)}")
     print(f"Pool industrial: {len(pool_industrial)}")
+    print(f"Pool BUS: {len(pool_buses)}")
     print(f"Compilação única: {tempo_compilacao_unica:.2f} segundos")
     print(f"Tempo total: {tempo_total:.2f} segundos")
     print(f"Resumo: {arquivo_resumo}")
@@ -1412,6 +1440,7 @@ def executar_simulacoes_odss(
     quantidade_ldv: int | None = None,
     quantidade_two_wheelers: int | None = None,
     quantidade_trucks: int | None = None,
+    quantidade_buses: int | None = None,
     quantidade_simulacoes: int = 1,
     horas_simulacao: list[float] | None = None,
     salvar_arquivos_cenario: bool = False,
@@ -1447,6 +1476,7 @@ def executar_simulacoes_odss(
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,
             quantidade_trucks=quantidade_trucks,
+            quantidade_buses=quantidade_buses,
         )
     )
 
@@ -1454,8 +1484,14 @@ def executar_simulacoes_odss(
         quantidade_ldv = quantidade_ldv or 0
         quantidade_two_wheelers = quantidade_two_wheelers or 0
         quantidade_trucks = quantidade_trucks or 0
+        quantidade_buses = quantidade_buses or 0
 
-        if quantidade_ldv < 0 or quantidade_two_wheelers < 0 or quantidade_trucks < 0:
+        if (
+            quantidade_ldv < 0
+            or quantidade_two_wheelers < 0
+            or quantidade_trucks < 0
+            or quantidade_buses < 0
+        ):
             raise ValueError("As quantidades não podem ser negativas.")
 
         # if quantidade_ldv + quantidade_two_wheelers + quantidade_trucks <= 0:
@@ -1493,6 +1529,7 @@ def executar_simulacoes_odss(
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,
             quantidade_trucks=quantidade_trucks,
+            quantidade_buses=quantidade_buses,
             quantidade_simulacoes=quantidade_simulacoes,
             hora_simulacao=hora_simulacao,
             arquivos_extra_redirect=arquivos_extra_redirect,
@@ -1515,6 +1552,7 @@ def executar_simulacoes_odss(
         quantidade_ldv = None
         quantidade_two_wheelers = None
         quantidade_trucks = None
+        quantidade_buses = None
         quantidade_simulacoes = 1
 
     diretorio_resultados = criar_diretorio_resultados(arquivo_dss)
@@ -1526,6 +1564,7 @@ def executar_simulacoes_odss(
         quantidade_ldv=quantidade_ldv,
         quantidade_two_wheelers=quantidade_two_wheelers,
         quantidade_trucks=quantidade_trucks,
+        quantidade_buses=quantidade_buses,
         diretorio_dss_base=diretorio_dss_base,
         diretorio_bdgd=diretorio_bdgd,
         diretorio_resultados=diretorio_resultados,

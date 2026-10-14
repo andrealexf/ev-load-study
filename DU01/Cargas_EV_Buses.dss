@@ -4,8 +4,8 @@ AddBusMarker Bus="5000984312.2.3.4" code=15 color=Yellow size=4
 New "Load.BUS_BONA" bus1="710101.1.2.3.4" phases=3 conn=Delta model=1 kv=0.220000000 kw=22 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
 AddBusMarker Bus="710101" code=15 color=Yellow size=4
 
-New "Load.BUS_VALO" bus1="549941B.1.2.3" phases=3 conn=Delta model=1 kv=0.220000000 kw=22 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
-AddBusMarker Bus="549941B" code=15 color=Yellow size=4
+!New "Load.BUS_VALO" bus1="549941B.1.2.3" phases=3 conn=Delta model=1 kv=0.220000000 kw=22 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+!AddBusMarker Bus="549941B" code=15 color=Yellow size=4
 
-New "Load.BUS_SAOJ" bus1="509348B.1.2.3" phases=3 conn=Delta model=1 kv=0.220000000 kw=22 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
-AddBusMarker Bus="509348B" code=15 color=Yellow size=4
+!New "Load.BUS_SAOJ" bus1="509348B.1.2.3" phases=3 conn=Delta model=1 kv=0.220000000 kw=22 pf=1 status=variable vmaxpu=1.5 vminpu=0.92 
+!AddBusMarker Bus="509348B" code=15 color=Yellow size=4

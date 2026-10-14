@@ -4,19 +4,21 @@ from add_bus_marker import executar_add_bus_marker
 from bdgd_extract import executar_extracao_ucbt
 from odss_sim import executar_simulacoes_odss, gerar_cargas_ev_cenario
 
-quantidade_ldv = 596 #30
-quantidade_two_wheelers = 70 #15
-quantidade_trucks = 11 #4
-quantidade_simulacoes = 500 #5
-horas_simulacao = [19]
+# 21 ; 40p	107t	306tw	3271ldv 	3bus
+quantidade_ldv = 2464
+quantidade_two_wheelers = 234
+quantidade_trucks = 75
+quantidade_buses = 2
+quantidade_simulacoes = 500 #500
+horas_simulacao = [21]
 
 numero_simulacao_geracao = 1
-seed_geracao = 10001
+seed_geracao = 10099
 
-extrair_bdgd = False
-gerar_arquivo_cargas_ev = False
-gerar_busmarker = False
-simular = True
+extrair_bdgd = False #false
+gerar_cargas_ev = False #false
+gerar_busmarker = False #false
+simular = True #true
 
 arquivo_cargas_ev_existente = None
 arquivo_pv = None
@@ -28,7 +30,7 @@ def main():
     gdb_path = Path(
         r"D:\py-dss-bdgd2dss"
         r"\Cemig-D_4950_2022-12-31_V11_20230920-1643.gdb"
-    )
+    ) #COLOCAR AQUI O DIRETÓRIO DA BDGD
 
     diretorio_bdgd = diretorio_codigo / "saida_bdgd_ucbt"
     diretorio_dss_base = diretorio_codigo / "DU01"
@@ -44,15 +46,17 @@ def main():
             gdb_path=gdb_path,
         )
 
-    if gerar_arquivo_cargas_ev and (
+    if gerar_cargas_ev and (
         quantidade_ldv is not None
         or quantidade_two_wheelers is not None
         or quantidade_trucks is not None
+        or quantidade_buses is not None
     ):
         cenario_ev = gerar_cargas_ev_cenario(
             quantidade_ldv=quantidade_ldv or 0,
             quantidade_two_wheelers=quantidade_two_wheelers or 0,
             quantidade_trucks=quantidade_trucks or 0,
+            quantidade_buses=quantidade_buses or 0,
             diretorio_dss_base=diretorio_dss_base,
             diretorio_bdgd=diretorio_bdgd,
             diretorio_resultados=diretorio_resultados_manual,
@@ -80,6 +84,7 @@ def main():
             quantidade_ldv=quantidade_ldv,
             quantidade_two_wheelers=quantidade_two_wheelers,
             quantidade_trucks=quantidade_trucks,
+            quantidade_buses=quantidade_buses,
             quantidade_simulacoes=quantidade_simulacoes,
             horas_simulacao=horas_simulacao,
             salvar_arquivos_cenario=True,

@@ -101,12 +101,7 @@ Redirect "CargasMT_DU01_2022124950_IJAU15_--MBS-1--T--.dss"
 
 
 
-!set datapath = "C:\Users\Andre\Documents\ev\DU01\arquivos_gerados"
 
-!Redirect "Cargas_EV_Sim_00000_10001"
-!Redirect "BusMarkers_EV_Sim_00000_10001"
-
-!set datapath = "C:\Users\Andre\Documents\ev\DU01"
 
 
 New monitor.TOTALpower element=Line.SMT_000 terminal=1 mode=1 ppolar=no
@@ -131,6 +126,7 @@ Set DIVerbose=No
 Set OverloadReport=No
 Set VoltExceptionReport=No
 
+/*
 buscoords buscoords05.csv
 buscoords buscoords06.csv
 buscoords buscoords07.csv
@@ -139,3 +135,4 @@ buscoords buscoords11.csv
 buscoords buscoords13.csv
 buscoords buscoords14.csv
 buscoords buscoords15.csv
+*/

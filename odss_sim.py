@@ -31,9 +31,24 @@ limite_sobretensao_pu = 1.05
 tamanho_lote_comandos = 500
 
 
-def criar_diretorio_resultados(arquivo_dss: Path) -> Path:
+def criar_diretorio_resultados(
+    arquivo_dss: Path,
+    identificador_cenario: str | None = None,
+) -> Path:
     data_hora = datetime.now().strftime("%Y%m%d_%H%M%S")
-    diretorio_resultados = arquivo_dss.parent / f"simulacoes_odssdirect_{data_hora}"
+    prefixo = "simulacoes_odssdirect"
+
+    if identificador_cenario:
+        identificador = re.sub(
+            r"[^A-Za-z0-9_-]+",
+            "_",
+            str(identificador_cenario),
+        ).strip("_")
+
+        if identificador:
+            prefixo = f"{prefixo}_{identificador}"
+
+    diretorio_resultados = arquivo_dss.parent / f"{prefixo}_{data_hora}"
     diretorio_resultados.mkdir(parents=True, exist_ok=True)
     return diretorio_resultados
 
@@ -1445,6 +1460,7 @@ def executar_simulacoes_odss(
     horas_simulacao: list[float] | None = None,
     salvar_arquivos_cenario: bool = False,
     verbose_opendss_completo: bool = True,
+    identificador_cenario: str | None = None,
 ) -> list[dict]:
     arquivo_dss = Path(arquivo_dss).resolve()
 
@@ -1514,7 +1530,10 @@ def executar_simulacoes_odss(
                 "A quantidade de simulações deve ser maior que zero."
             )
 
-        diretorio_resultados = criar_diretorio_resultados(arquivo_dss)
+        diretorio_resultados = criar_diretorio_resultados(
+            arquivo_dss,
+            identificador_cenario=identificador_cenario,
+        )
         arquivo_checkpoint = (
             diretorio_resultados
             / "Checkpoint_Simulacoes_OpenDSSDirect.csv"
@@ -1555,7 +1574,10 @@ def executar_simulacoes_odss(
         quantidade_buses = None
         quantidade_simulacoes = 1
 
-    diretorio_resultados = criar_diretorio_resultados(arquivo_dss)
+    diretorio_resultados = criar_diretorio_resultados(
+        arquivo_dss,
+        identificador_cenario=identificador_cenario,
+    )
     arquivo_checkpoint = diretorio_resultados / "Checkpoint_Simulacoes_OpenDSSDirect.csv"
     tempo_inicio_total = time.perf_counter()
 
